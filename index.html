@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        @keyframes sliding {
+            0% {
+                left: 0;
+            }
+            50% {
+                left: 255px;
+            }
+            100% {
+                left: 0;
+            }
+        }
+        @keyframes rotation {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .screen {
+            border: 1px solid #333;
+            width: 375px;
+            height: 667px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .basket {
+            width: 120px;
+            height: 120px;
+            background: url('./hat.png') no-repeat;
+            background-size: 100% 100%;
+            position: absolute;
+            top: 100px;
+            animation: sliding 5s ease-in-out forwards infinite; 
+        }
+        .card {
+            width: 50px;
+            height: 80px;
+            position: absolute;
+            border: 1px solid #333;
+            animation: rotation 1s linear infinite forwards;
+            background: url('./dealdash.jpg') 50% 0 no-repeat;
+            background-size: contain;
+        }
+    </style>
+</head>
+<body>
+<!--
+getCoords: function (even, firstIteration) {
+            var startX = this.startX || this.coords.x;
+            var startY = this.startY || this.screen.clientHeight - this.coords.y;
+            var borderX = this.screen.clientWidth;
+            var xVector = firstIteration ? borderX - startX : this.screen.clientWidth;
+            var angleRad = this.angleDeg * Math.PI / 180;
+            var endY = startY + xVector * Math.tan(angleRad);
+
+            this.startY = endY;
+
+            if (even) {
+              this.startX = borderX;
+            } else {
+              this.startX = 1;
+            }
+
+            this.el.style.left = (even ? borderX : 0) + 'px';
+            this.el.style.top = this.screen.clientHeight - endY + 'px';
+          },
+          isBasketCollision: function () {
+            var basketRect = this.basket.getBoundingClientRect();
+            var elRect = this.el.getBoundingClientRect();
+            
+            if (elRect.x < basketRect.x + basketRect.width &&
+              elRect.x + elRect.width > basketRect.x &&
+              elRect.y < basketRect.y + basketRect.height &&
+              elRect.height + elRect.y > basketRect.y) {
+              return true;
+            }
+          },
+-->
+    <div class="screen">
+        <h2 class="score">Attempts: <span class="score-result">0</span></h2>
+        <div class="basket"></div>
+    </div>
+    <script>
+        var game = {
+          cardSpeed: 10,
+          animationDuration: 500,
+          cardWidth: 50,
+          cardHeight: 80,
+          updateScore: function () {
+            var resEl = document.querySelector('.score-result');
+            var currentScore = window.parseInt(resEl.textContent);
+            
+            resEl.textContent = currentScore + 1;
+          },
+          setScreen: function (screen) {
+            if (!this.screen) {
+              this.screen = screen;
+            }
+          },
+          cacheCoords: function (x, y) {
+            this.cache = {
+              x: x,
+              y: y
+            };
+          },
+          isBasketCollision: function () {
+            var basketRect = document.querySelector('.basket').getBoundingClientRect();
+            var elRect = this.card.getBoundingClientRect();
+
+            if (elRect.x < basketRect.x + basketRect.width &&
+              elRect.x + elRect.width > basketRect.x &&
+              elRect.y < basketRect.y + basketRect.height &&
+              elRect.height + elRect.y > basketRect.y) {
+              return true;
+            }
+          },
+          createCard: function (releasedX, releasedY) {
+            this.card = document.createElement('div');
+            this.card.style.width = this.cardWidth + 'px';
+            this.card.style.height = this.cardHeight + 'px';
+            this.card.style.top = releasedY + 'px';
+            this.card.style.left = releasedX + 'px';
+            this.card.classList.add('card');
+          },
+          // Map coordinates from browser's ones to Math ones
+          getCorrectCoordinates: function (value) {
+            return this.screen.clientHeight - value;
+          },
+          removeCard: function () {
+            // TODO: Use browser compatible option
+            this.card.remove();
+            this.card = null;
+          },
+          updateCardCoords: function (x1, y1, x2, y2) {
+            var nextY = y2 + 10;
+            var nextX = x1 + (nextY - y1) * ((x2 - x1) / (y2 - y1));
+            var cardLeft = window.parseInt(nextX);
+            var cardTop = this.screen.clientHeight - window.parseInt(nextY);
+            var card;
+            
+            console.log(cardTop);
+            
+            // TODO: The problem is here!
+            if (
+              cardLeft > this.screen.clientWidth || cardTop > this.screen.clientHeight ||
+              cardLeft < 0 || cardTop < 0
+            ) {
+              this.removeCard();
+              return;
+            }
+            
+            if (this.isBasketCollision()) {
+              this.removeCard();
+              return;
+            }
+
+            card = document.querySelector('.card');
+            card.style.left = cardLeft + 'px';
+            card.style.top = cardTop + 'px';
+            
+            window.requestAnimationFrame(this.updateCardCoords.bind(this,
+              x2,
+              y2,
+              nextX,
+              nextY
+            ));
+          },
+          addCardUI: function () {
+            this.screen.appendChild(this.card);
+          },
+          throwCardUI: function (releasedX, releasedY) {
+            window.requestAnimationFrame(this.updateCardCoords.bind(this,
+              this.cache.x,
+              this.getCorrectCoordinates(this.cache.y),
+              releasedX,
+              this.getCorrectCoordinates(releasedY)
+            ));
+          },
+          throwCard: function (releasedX, releasedY) {
+            if (!this.card) {
+              this.createCard(releasedX, releasedY);
+              this.addCardUI();
+              this.throwCardUI(releasedX, releasedY);
+              this.updateScore();
+            }
+          }
+        };
+        
+        var screen = document.querySelector('.screen');
+        
+        game.setScreen(screen);
+        
+        screen.addEventListener('touchstart', function (e) {
+          game.cacheCoords(
+            e.changedTouches && e.changedTouches[0].clientX,
+            e.changedTouches && e.changedTouches[0].clientY
+          );
+        });
+        screen.addEventListener('touchend', function (e) {
+          game.throwCard(
+            e.changedTouches && e.changedTouches[0].clientX,
+            e.changedTouches && e.changedTouches[0].clientY
+          );
+        });
+    </script>
+</body>
+</html>
