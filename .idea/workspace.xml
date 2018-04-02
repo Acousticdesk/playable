@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f2a2ffea-a871-43f7-859c-11867204716e" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/hat.png" afterPath="$PROJECT_DIR$/hat.png" />
       <change beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
+      <change beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,11 +18,31 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="795" column="12" lean-forward="true" selection-start-line="795" selection-start-column="12" selection-end-line="795" selection-end-column="12" />
+            <state relative-caret-position="360">
+              <caret line="293" column="24" lean-forward="true" selection-start-line="293" selection-start-column="24" selection-end-line="293" selection-end-column="24" />
               <folding>
-                <marker date="1522415384536" expanded="true" signature="24308:24458" ph="..." />
+                <marker date="1522669136837" expanded="true" signature="24821:24971" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/package.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="12" lean-forward="false" selection-start-line="0" selection-start-column="12" selection-end-line="0" selection-end-column="12" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -31,16 +51,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>HIDDEN</find>
-      <find>hidden</find>
-      <find>updateScreo</find>
-      <find>opacity: 0</find>
-      <find>ad__cta</find>
-      <find>current</find>
-      <find>left</find>
-      <find>ad__container</find>
-      <find>ad__</find>
-      <find>isBasketcol</find>
       <find>transition</find>
       <find>add('s</find>
       <find>classList.add</find>
@@ -61,6 +71,16 @@
       <find>getLoadedAds</find>
       <find>loaded_ads</find>
       <find>startHere</find>
+      <find>waiting</find>
+      <find>hand.origina</find>
+      <find>class=&quot;ha</find>
+      <find>hand.original</find>
+      <find>'left</find>
+      <find>transform:</find>
+      <find>transform-origin</find>
+      <find>-angl</find>
+      <find>95%</find>
+      <find>.screen</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -70,6 +90,7 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/app.js" />
+        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/index.html" />
       </list>
     </option>
@@ -82,6 +103,9 @@
   </component>
   <component name="NodeModulesDirectoryManager">
     <handled-path value="$PROJECT_DIR$/node_modules" />
+  </component>
+  <component name="PackageJsonUpdateNotifier">
+    <dismissed value="$PROJECT_DIR$/package.json" />
   </component>
   <component name="PhpServers">
     <servers />
@@ -158,12 +182,12 @@
       <option name="presentableId" value="Default" />
       <updated>1521448608255</updated>
       <workItem from="1521448611626" duration="51872000" />
-      <workItem from="1522332201292" duration="7434000" />
+      <workItem from="1522332201292" duration="14008000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="59306000" />
+    <option name="totallyTimeSpent" value="65880000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -177,7 +201,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329602" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -205,7 +229,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1522415384536" expanded="true" signature="24308:24458" ph="..." />
+            <marker date="1522669136837" expanded="true" signature="24821:24971" ph="..." />
           </folding>
         </state>
       </provider>
@@ -236,12 +260,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="12" lean-forward="false" selection-start-line="0" selection-start-column="12" selection-end-line="0" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="795" column="12" lean-forward="true" selection-start-line="795" selection-start-column="12" selection-end-line="795" selection-end-column="12" />
+        <state relative-caret-position="360">
+          <caret line="293" column="24" lean-forward="true" selection-start-line="293" selection-start-column="24" selection-end-line="293" selection-end-column="24" />
           <folding>
-            <marker date="1522415384536" expanded="true" signature="24308:24458" ph="..." />
+            <marker date="1522669136837" expanded="true" signature="24821:24971" ph="..." />
           </folding>
         </state>
       </provider>

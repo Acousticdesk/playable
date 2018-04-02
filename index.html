@@ -206,12 +206,15 @@
         }
         @keyframes waiting {
             0% {
+                bottom: 50px;
                 transform: rotate(-45deg);
             }
-            95% {
+            87% {
+                bottom: 100px;
                 transform: rotate(45deg);
             }
             100% {
+                bottom: 50px;
                 transform: rotate(-45deg);
             }
         }
@@ -250,7 +253,15 @@
             bottom: 50px;
             left: 50%;
             margin-left: -100px;
+        }
+        .hand.original {
+            transform-origin: 0 70%;
             background: url('./hand.png');
+            background-size: contain;
+        }
+        .hand.inverted {
+            transform-origin: 100% 70%;
+            background: url('./hand_inverted.png');
             background-size: contain;
         }
         .hand:after {
@@ -258,17 +269,24 @@
             content: ' ';
             width: 40px;
             height: 40px;
-            right: 30px;
             top: 50%;
             margin-top: -45px;
-            transform: rotate(-15deg);
             background: url('./dealdash.jpg');
             background-size: contain;
+        }
+        .hand.original:after {
+            right: 30px;
+            transform: rotate(-15deg);
+        }
+        .hand.inverted:after {
+            left: 30px;
+            transform: rotate(15deg);
         }
         .hand.waiting {
             animation: waiting 1.5s infinite;
         }
         .screen {
+            position: relative;
             height: 100%;
             overflow: hidden;
         }
@@ -386,7 +404,7 @@
         </div>
         <!--<h2 class="score">Hits: <span class="score-result">0</span>/5</h2>-->
         <div class="basket"></div>
-        <div class="hand waiting"></div>
+        <div class="hand original waiting"></div>
     </div>
     <script>
       (function () {
@@ -738,7 +756,6 @@
             } else if (releasedSide === 'right') {
               nextX = Math.sqrt( Math.pow(hyperA, 2) * (1 - Math.pow(nextY, 2) / Math.pow(hyperB, 2)) ) + this.startHereX - hyperA;
             }
-            console.log(nextX);
             var cardLeft = window.parseInt(nextX);
             var cardTop = this.screen.clientHeight - window.parseInt(nextY);
             
@@ -777,6 +794,9 @@
           addCardUI: function () {
             this.screen.appendChild(this.card);
           },
+          getCursorPosition: function (releasedX) {
+            return releasedX < this.screen.clientWidth / 2 ? 'left' : 'right';
+          },
           throwCardUI: function (releasedX, releasedY) {
             // TODO: Parabola
             // var parabolaParam;
@@ -792,13 +812,7 @@
             // TODO: Hyperbola, Ellipsis
             var hyperB = this.screen.clientHeight + this.basket.clientHeight;
             var hyperA = hyperB / 1.75;
-            var releasedSide;
-            
-            if (releasedX < this.screen.clientWidth / 2) {
-              releasedSide = 'right';
-            } else {
-              releasedSide = 'left';
-            }
+            var releasedSide = this.getCursorPosition(releasedX);
             
             window.requestAnimationFrame(this.updateCardCoords.bind(this,
               this.cache.x,
@@ -811,13 +825,27 @@
               releasedSide
             ));
           },
-          calculateAngle: function (releasedX, releasedY) {
+          // TODO: Change formula for hand pre-throw 
+          calculateAngle: function (cursorX, cursorY, releasedSide) {
+            // this.hand.classList.remove('waiting');
+            // var tg = this.getCorrectCoordinates(cursorY) / cursorX;
+            // var angleRad = Math.atan(tg);
+            // var angleDeg = angleRad * 180 / Math.PI;
+            // var delta = 30;
+            // angleDeg = releasedSide === 'right' ? angleDeg - delta : -angleDeg + delta;
+            // this.hand.style.transform = 'rotate(' + angleDeg + 'deg)';
             this.hand.classList.remove('waiting');
-            var tg = this.getCorrectCoordinates(releasedY) / releasedX;
-            var angleRad = Math.atan(tg);
-            var angleDeg = angleRad * 180 / Math.PI;
-            angleDeg -= 30;
-            this.hand.style.transform = 'rotate(' + -angleDeg + 'deg)';
+            var maxHeight = this.screen.clientHeight / 2,
+              deg,
+              cursorY = this.screen.clientHeight - cursorY;
+            
+            if (cursorY > maxHeight) {
+              deg = 90;
+            } else {
+              deg = cursorY / maxHeight * 90;
+            }
+            
+            this.hand.style.transform = 'rotate(' + (releasedSide === 'right' ? deg : -deg) + 'deg)';
           },
           isSwiped: function (releasedX, releasedY) {
             return this.cache.x !== releasedX || this.cache.y !== releasedY;
@@ -838,12 +866,32 @@
               this.addCardUI();
               this.throwCardUI(releasedX, releasedY);
               this.hand.classList.add('hidden');
+              this.hand.classList.add('original');
+              this.hand.classList.remove('inverted');
             }
           },
-          preview: function () {
+          applyHandPositionClass: function (releasedSide) {
+            this.hand.classList.toggle('original', releasedSide === 'left');
+            this.hand.classList.toggle('inverted', releasedSide === 'right');
+          },
+          moveHand: function (cursorX, cursorY) {
+            // this.hand.style.left = cursorX + this.hand.clientWidth / 2 + 'px';
+            this.hand.style.left = cursorX + 'px';
+            this.hand.style.top = cursorY - this.hand.clientHeight / 2 + 'px';
+          },
+          trackHandPosition: function (cursorX, cursorY) {
+            var releasedSide = this.getCursorPosition(cursorX);
+
+            this.calculateAngle(cursorX, cursorY, releasedSide);
+            this.moveHand(cursorX, cursorY);
+            this.applyHandPositionClass(releasedSide);
+          },
+          preview: function (random) {
+            var handBox;
+            
             if (!this.card) {
-              var handBox = this.hand.getBoundingClientRect();
-              this.cache.x = handBox.left + handBox.width / 2;
+              handBox = this.hand.getBoundingClientRect();
+              this.cache.x = handBox.left + handBox.width / 2 + random;
               this.cache.y = handBox.top;
               this.createCard('placeholder');
               this.addCardUI();
@@ -855,8 +903,10 @@
           },
           startPreview: function () {
             this.previewInterval = window.setInterval(function () {
+              var random;
               if (document.hasFocus()) {
-                this.preview();
+                random = this.getRandomArbitrary(-20, 20);
+                this.preview(random);
               } else {
                 if (this.card) {
                   this.card.remove();
@@ -886,10 +936,10 @@
         };
         
         var onTouchmove = function (e) {
-          game.calculateAngle(
-            e.changedTouches && e.changedTouches[0].clientX,
-            e.changedTouches && e.changedTouches[0].clientY
-          );
+          var x = e.changedTouches && e.changedTouches[0].clientX, 
+            y = e.changedTouches && e.changedTouches[0].clientY;
+
+          game.trackHandPosition(x, y);
         };
         
         game.startPreview();
