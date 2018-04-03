@@ -232,6 +232,23 @@
                 transform: scale(1) rotate(0deg);
             }
         }
+        @keyframes cta {
+            0% {
+                transform: scale(.85) rotate(0deg);
+            }
+            25% {
+                transform: scale(1.15) rotate(10deg);
+            }
+            50% {
+                transform: scale(.85) rotate(0deg);
+            }
+            75% {
+                transform: scale(1.15) rotate(-10deg);
+            }
+            100% {
+                transform: scale(.85) rotate(0deg);
+            }
+        }
         .hidden {
             display: none;
         }
@@ -247,6 +264,17 @@
             /**/
             /*background-size: contain;*/
         /*}*/
+        .cta {
+            position: absolute;
+            top: 50%;
+            padding: 0 10%;
+            width: 100%;
+            text-align: center;
+            font-family: sans-serif;
+            font-size: 25px;
+            animation: cta 2s ease-in-out infinite;
+            box-sizing: border-box;
+        }
         .hand {
             position: absolute;
             width: 112.5px;
@@ -320,6 +348,21 @@
             padding: 10px;
             font-family: sans-serif;
         }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            font-size: 20px;
+            color: #fff;
+            cursor: pointer;
+            text-align: center;
+        }
+        
         .win-screen {
             z-index: 10;
             position: absolute;
@@ -350,6 +393,7 @@
 <body>
     <div class="screen">
         <div class="win-screen">
+            <div class="close-btn">&times;</div>
             <div class="dio-intint">
                 <div class="dio-intint-container">
                     <div class="dio-intint-slider">
@@ -406,6 +450,7 @@
         </div>
         <!--<h2 class="score">Hits: <span class="score-result">0</span>/5</h2>-->
         <div class="basket"></div>
+        <div class="cta">Get an apple to the basket</div>
         <div class="hand original waiting"></div>
     </div>
     <script>
@@ -665,6 +710,8 @@
           hand: document.querySelector('.hand'),
           basket: document.querySelector('.basket'),
           winScreen: document.querySelector('.win-screen'),
+          cta: document.querySelector('.cta'),
+          closeBtn: document.querySelector('.close-btn'),
           scoreVal: 0,
           
           score: function () {
@@ -723,7 +770,7 @@
             window.setTimeout(function () {
               this.basket.classList.remove('hit');
               // TODO: Use browser compatible option
-              this.hand.classList.remove('hidden');
+              // this.hand.classList.remove('hidden');
               this.hand.classList.add('waiting');
             }.bind(this), 1000);
           },
@@ -737,6 +784,13 @@
 
             this.winScreen.addEventListener('transitionend', onTransitionend);
             this.winScreen.classList.add('show');
+          },
+          resetHandAnglePosition: function () {
+            // this.hand.classList.add('hidden');
+            this.hand.classList.add('original');
+            this.hand.classList.remove('inverted');
+            this.hand.style.left = '';
+            this.hand.style.top = '';
           },
           updateCardCoords: function (x1, y1, x2, y2, hyperA, hyperB, releasedSide) {
             var nextX;
@@ -770,6 +824,7 @@
               cardLeft < 0 || cardTop < 0
             ) {
               this.removeCard();
+              this.resetHandAnglePosition();
               return;
             }
             
@@ -781,6 +836,7 @@
               if (this.scoreVal === 1) {
                 this.win();
               }
+              this.resetHandAnglePosition();
               return;
             }
             
@@ -864,6 +920,7 @@
           },
           stopPreview: function () {
             window.clearInterval(this.previewInterval);
+            this.cta.style.display = 'none';
             this.isPreview = false;
           },
           throwCard: function (releasedX, releasedY) {
@@ -871,11 +928,6 @@
               this.createCard();
               this.addCardUI();
               this.throwCardUI(releasedX - this.hand.clientWidth / 2, releasedY);
-              this.hand.classList.add('hidden');
-              this.hand.classList.add('original');
-              this.hand.classList.remove('inverted');
-              this.hand.style.left = '';
-              this.hand.style.top = '';
             }
           },
           applyHandPositionClass: function (releasedSide) {
@@ -931,43 +983,58 @@
                 }
               }
             }.bind(this), 3000);
+          },
+          start: function (screen) {
+            var onTouchstart = function (e) {
+              this.cacheCoords(
+                e.changedTouches && e.changedTouches[0].clientX,
+                e.changedTouches && e.changedTouches[0].clientY
+              );
+            }.bind(this);
+
+            var onTouchend = function (e) {
+             this.throwCard(
+                e.changedTouches && e.changedTouches[0].clientX,
+                e.changedTouches && e.changedTouches[0].clientY
+              );
+            }.bind(this);
+
+            var onTouchmove = function (e) {
+              var x = e.changedTouches && e.changedTouches[0].clientX,
+                y = e.changedTouches && e.changedTouches[0].clientY;
+
+              this.trackHandPosition(x, y);
+            }.bind(this);
+            
+            var onCloseBtn = function () {
+                this.close();
+                eventListeners('remove');
+            }.bind(this);
+            
+            var onScreenTouchstart = function () {
+              this.makePreviewStop();
+            }.bind(this);
+            
+            var eventListeners = function (state) {
+              this.screen[state + 'EventListener']('touchstart', onScreenTouchstart);
+              this.hand[state + 'EventListener']('touchstart', onTouchstart);
+              this.screen[state + 'EventListener']('touchend', onTouchend);
+              this.hand[state + 'EventListener']('touchmove', onTouchmove);
+              this.closeBtn[state + 'EventListener']('click', onCloseBtn);
+            }.bind(this);
+
+            this.setScreen(screen);
+            this.startPreview();
+            eventListeners('add');
+          },
+          close: function () {
+            this.screen.parentElement.removeChild(this.screen);
           }
         };
         
         var screen = document.querySelector('.screen');
-        var hand = document.querySelector('.hand');
-        game.setScreen(screen);
         
-        var onTouchstart = function (e) {
-          game.cacheCoords(
-            e.changedTouches && e.changedTouches[0].clientX,
-            e.changedTouches && e.changedTouches[0].clientY
-          );
-        };
-        
-        var onTouchend = function (e) {
-          game.throwCard(
-            e.changedTouches && e.changedTouches[0].clientX,
-            e.changedTouches && e.changedTouches[0].clientY
-          );
-        };
-        
-        var onTouchmove = function (e) {
-          var x = e.changedTouches && e.changedTouches[0].clientX, 
-            y = e.changedTouches && e.changedTouches[0].clientY;
-
-          game.trackHandPosition(x, y);
-        };
-        
-        game.startPreview();
-        
-        // TODO: Release throw when cursor is out of hand preset
-        screen.addEventListener('touchstart', function () {
-          game.makePreviewStop();
-        });
-        hand.addEventListener('touchstart', onTouchstart);
-        screen.addEventListener('touchend', onTouchend);
-        hand.addEventListener('touchmove', onTouchmove);
+        game.start(screen);
     </script>
 </body>
 </html>
