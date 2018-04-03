@@ -690,11 +690,15 @@
           isBasketCollision: function () {
             var basketRect = this.basket.getBoundingClientRect();
             var elRect = this.card.getBoundingClientRect();
+            var basketHoleOnPictureDiff = 20;
+            var basketHoleDiffBottom = basketRect.height - basketHoleOnPictureDiff;
+            var basketHoleDiffTop = basketRect.height / 4;
+            var sideDiff = basketRect.width / 2;
             
-            if (elRect.left < basketRect.left + basketRect.width &&
-              elRect.left + elRect.width > basketRect.left &&
-              elRect.top < basketRect.top + basketRect.height &&
-              elRect.height + elRect.top > basketRect.top) {
+            if (elRect.left < basketRect.left + basketRect.width - sideDiff &&
+              elRect.left + elRect.width > basketRect.left + sideDiff &&
+              elRect.top < basketRect.top + basketHoleOnPictureDiff &&
+              elRect.height + elRect.top > basketRect.top + basketHoleOnPictureDiff) {
               return true;
             }
           },
