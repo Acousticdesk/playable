@@ -235,21 +235,22 @@
         .hidden {
             display: none;
         }
-        .screen:before {
-            content: ' ';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom:0 ;
-            z-index: -1;
-            opacity: 0.05;
-            background: url('./back.jpg');
-        }
+        /*.screen:before {*/
+            /*content: ' ';*/
+            /*position: absolute;*/
+            /*top: 0;*/
+            /*left: 0;*/
+            /*right: 0;*/
+            /*bottom:0 ;*/
+            /*z-index: -1;*/
+            /*opacity: 0.05;*/
+            /**/
+            /*background-size: contain;*/
+        /*}*/
         .hand {
             position: absolute;
-            width: 200px;
-            height: 117px;
+            width: 112.5px;
+            height: 100px;
             bottom: 50px;
             left: 50%;
             margin-left: -100px;
@@ -257,31 +258,31 @@
         .hand.original {
             transform-origin: 0 70%;
             background: url('./hand.png');
-            background-size: contain;
+            background-size: 100%;
         }
         .hand.inverted {
             transform-origin: 100% 70%;
             background: url('./hand_inverted.png');
             background-size: contain;
         }
-        .hand:after {
-            position: absolute;
-            content: ' ';
-            width: 40px;
-            height: 40px;
-            top: 50%;
-            margin-top: -45px;
-            background: url('./dealdash.jpg');
-            background-size: contain;
-        }
-        .hand.original:after {
-            right: 30px;
-            transform: rotate(-15deg);
-        }
-        .hand.inverted:after {
-            left: 30px;
-            transform: rotate(15deg);
-        }
+        /*.hand:after {*/
+            /*position: absolute;*/
+            /*content: ' ';*/
+            /*width: 40px;*/
+            /*height: 40px;*/
+            /*top: 50%;*/
+            /*margin-top: -45px;*/
+            /*background: url('./dealdash.jpg');*/
+            /*background-size: contain;*/
+        /*}*/
+        /*.hand.original:after {*/
+            /*right: 30px;*/
+            /*transform: rotate(-15deg);*/
+        /*}*/
+        /*.hand.inverted:after {*/
+            /*left: 30px;*/
+            /*transform: rotate(15deg);*/
+        /*}*/
         .hand.waiting {
             animation: waiting 1.5s infinite;
         }
@@ -289,10 +290,12 @@
             position: relative;
             height: 100%;
             overflow: hidden;
+            background: url('./back.jpg') no-repeat;
+            background-size: cover;
         }
         .basket {
             width: 90px;
-            height: 90px;
+            height: 117px;
             background: url('./hat.png') no-repeat;
             background-size: 100% 100%;
             position: absolute;
@@ -303,12 +306,11 @@
             animation: hit 1s, sliding 3s forwards infinite linear;
         }
         .card {
-            width: 50px;
-            height: 80px;
+            width: 60px;
+            height: 62.5px;
             position: absolute;
-            border: 4px solid #333;
             animation: rotation 1s linear infinite forwards;
-            background: url('./dealdash.jpg') 50% 0 no-repeat, #fff;
+            background: url('./card.png') no-repeat;
             background-size: contain;
         }
         .card.placeholder {
@@ -701,7 +703,7 @@
             this.card.style.width = this.cardWidth + 'px';
             this.card.style.height = this.cardHeight + 'px';
             this.card.style.top = this.cache.y + 'px';
-            this.card.style.left = this.cache.x + 'px';
+            this.card.style.left = this.cache.x - this.hand.clientWidth / 2 + 'px';
             this.card.classList.add('card');
             this.card.classList.toggle('placeholder', !!isPlaceholder);
           },
@@ -864,10 +866,12 @@
             if (!this.card && this.isSwiped(releasedX, releasedY) && this.canThrow()) {
               this.createCard();
               this.addCardUI();
-              this.throwCardUI(releasedX, releasedY);
+              this.throwCardUI(releasedX - this.hand.clientWidth / 2, releasedY);
               this.hand.classList.add('hidden');
               this.hand.classList.add('original');
               this.hand.classList.remove('inverted');
+              this.hand.style.left = '';
+              this.hand.style.top = '';
             }
           },
           applyHandPositionClass: function (releasedSide) {
@@ -901,9 +905,18 @@
               );
             }
           },
+          makePreviewStop: function () {
+            this.shouldStopPreview = true;
+          },
           startPreview: function () {
             this.previewInterval = window.setInterval(function () {
               var random;
+              
+              if (this.shouldStopPreview) {
+                this.stopPreview();
+                return;
+              }
+              
               if (document.hasFocus()) {
                 random = this.getRandomArbitrary(-20, 20);
                 this.preview(random);
@@ -946,7 +959,7 @@
         
         // TODO: Release throw when cursor is out of hand preset
         screen.addEventListener('touchstart', function () {
-          game.stopPreview();
+          game.makePreviewStop();
         });
         hand.addEventListener('touchstart', onTouchstart);
         screen.addEventListener('touchend', onTouchend);
