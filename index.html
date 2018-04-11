@@ -180,6 +180,7 @@
         /* Playable Ad */
         html, body {
             height: 100%;
+            overflow: hidden;
         }
         * {
             margin: 0;
@@ -278,7 +279,7 @@
         .hand {
             position: absolute;
             width: 112.5px;
-            height: 100px;
+            height: 80px;
             bottom: 50px;
             left: 50%;
             margin-left: -100px;
@@ -292,6 +293,18 @@
             transform-origin: 100% 70%;
             background: url('./hand_inverted.png');
             background-size: contain;
+        }
+        .hand.original-empty {
+            height: 68px;
+            transform-origin: 0 70%;
+            background: url('./hand_empty.png');
+            background-size: 100%;
+        }
+        .hand.inverted-empty {
+            height: 68px;
+            transform-origin: 0 70%;
+            background: url('./hand_empty_inverted.png');
+            background-size: 100%;
         }
         /*.hand:after {*/
             /*position: absolute;*/
@@ -450,7 +463,7 @@
         </div>
         <!--<h2 class="score">Hits: <span class="score-result">0</span>/5</h2>-->
         <div class="basket"></div>
-        <div class="cta">Get an apple to the basket</div>
+        <div class="cta">Hit the apple to the basket</div>
         <div class="hand original waiting"></div>
     </div>
     <script>
@@ -789,6 +802,8 @@
             // this.hand.classList.add('hidden');
             this.hand.classList.add('original');
             this.hand.classList.remove('inverted');
+            this.hand.classList.remove('original-empty');
+            this.hand.classList.remove('inverted-empty');
             this.hand.style.left = '';
             this.hand.style.top = '';
           },
@@ -924,11 +939,18 @@
             this.isPreview = false;
           },
           throwCard: function (releasedX, releasedY) {
-            if (!this.card && this.isSwiped(releasedX, releasedY) && this.canThrow()) {
+            if (!this.card && this.isSwiped(releasedX, releasedY) && this.canThrow() && this.validHandPosition) {
               this.createCard();
               this.addCardUI();
               this.throwCardUI(releasedX - this.hand.clientWidth / 2, releasedY);
+              this.applyHandEmptyClass();
+            } else {
+              this.resetHandAnglePosition();
             }
+          },
+          applyHandEmptyClass: function () {
+            this.hand.classList.toggle('original-empty', this.releasedSide === 'left');
+            this.hand.classList.toggle('inverted-empty', this.releasedSide === 'right');
           },
           applyHandPositionClass: function (releasedSide) {
             this.hand.classList.toggle('original', releasedSide === 'left');
@@ -939,11 +961,22 @@
             this.hand.style.left = cursorX + 'px';
             this.hand.style.top = cursorY - this.hand.clientHeight / 2 + 'px';
           },
+          setReleasedSide: function (releasedSide) {
+            this.releasedSide = releasedSide;
+          },
           trackHandPosition: function (cursorX, cursorY) {
             var releasedSide = this.getCursorPosition(cursorX);
-
+            var validHandPosition = cursorY > this.screen.clientHeight / 2 + this.hand.clientWidth;
+  
+            this.validHandPosition = validHandPosition;
+            
+            if (!validHandPosition) {
+              return;
+            }
+            
             this.calculateAngle(cursorX, cursorY, releasedSide);
             this.moveHand(cursorX, cursorY);
+            this.setReleasedSide(releasedSide);
             this.applyHandPositionClass(releasedSide);
           },
           preview: function (random) {
@@ -1017,9 +1050,9 @@
             
             var eventListeners = function (state) {
               this.screen[state + 'EventListener']('touchstart', onScreenTouchstart);
-              this.hand[state + 'EventListener']('touchstart', onTouchstart);
+              this.screen[state + 'EventListener']('touchstart', onTouchstart);
               this.screen[state + 'EventListener']('touchend', onTouchend);
-              this.hand[state + 'EventListener']('touchmove', onTouchmove);
+              this.screen[state + 'EventListener']('touchmove', onTouchmove);
               this.closeBtn[state + 'EventListener']('click', onCloseBtn);
             }.bind(this);
 

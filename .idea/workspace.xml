@@ -3,12 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f2a2ffea-a871-43f7-859c-11867204716e" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/back.jpg" afterPath="$PROJECT_DIR$/back.jpg" />
-      <change beforePath="$PROJECT_DIR$/card.png" afterPath="$PROJECT_DIR$/card.png" />
       <change beforePath="$PROJECT_DIR$/hand.png" afterPath="$PROJECT_DIR$/hand.png" />
       <change beforePath="$PROJECT_DIR$/hand_inverted.png" afterPath="$PROJECT_DIR$/hand_inverted.png" />
-      <change beforePath="$PROJECT_DIR$/hand_temp.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/hat.png" afterPath="$PROJECT_DIR$/hat.png" />
       <change beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -23,67 +19,12 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="970" column="37" lean-forward="false" selection-start-line="970" selection-start-column="37" selection-end-line="970" selection-end-column="37" />
+            <state relative-caret-position="2053">
+              <caret line="1043" column="34" lean-forward="false" selection-start-line="1043" selection-start-column="34" selection-end-line="1043" selection-end-column="34" />
               <folding>
-                <element signature="e#10152#10159#1" expanded="true" />
-                <marker date="1522769925765" expanded="true" signature="26975:27125" ph="..." />
+                <element signature="e#10566#10573#1" expanded="true" />
+                <marker date="1523448750730" expanded="true" signature="27506:27656" ph="..." />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="back.jpg" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/back.jpg">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="card.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/card.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dealdash.jpg" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dealdash.jpg">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="hand.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hand.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="hat.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hat.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/package.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="12" lean-forward="false" selection-start-line="0" selection-start-column="12" selection-end-line="0" selection-end-column="12" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -92,21 +33,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>'left</find>
-      <find>transform:</find>
-      <find>transform-origin</find>
-      <find>-angl</find>
-      <find>95%</find>
-      <find>.hand</find>
-      <find>hat</find>
-      <find>back.</find>
-      <find>.screen</find>
-      <find>.card</find>
-      <find>stopPre</find>
-      <find>stopPreiew</find>
-      <find>this.card = null</find>
-      <find>stopPreview</find>
-      <find>baskCo</find>
       <find>basketColl</find>
       <find>.cta</find>
       <find>get the</find>
@@ -122,6 +48,21 @@
       <find>querySeleco</find>
       <find>.parent</find>
       <find>preview</find>
+      <find>original</find>
+      <find>handPositionClass</find>
+      <find>orig</find>
+      <find>.hand</find>
+      <find>.original-em</find>
+      <find>reset</find>
+      <find>releasedSide</find>
+      <find>this.releasedSide</find>
+      <find>inverted-emty</find>
+      <find>get an</find>
+      <find>body</find>
+      <find>validHand</find>
+      <find>win()</find>
+      <find>throwCard</find>
+      <find>resetHandAnglePo</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -141,9 +82,6 @@
   <component name="JsGulpfileManager">
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
-  </component>
-  <component name="NodeModulesDirectoryManager">
-    <handled-path value="$PROJECT_DIR$/node_modules" />
   </component>
   <component name="PackageJsonUpdateNotifier">
     <dismissed value="$PROJECT_DIR$/package.json" />
@@ -172,7 +110,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -184,13 +122,14 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="HbShouldOpenHtmlAsHb" value="" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.JavaScript" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -224,18 +163,19 @@
       <updated>1521448608255</updated>
       <workItem from="1521448611626" duration="51872000" />
       <workItem from="1522332201292" duration="15997000" />
-      <workItem from="1522744803806" duration="6092000" />
+      <workItem from="1522744803806" duration="6288000" />
+      <workItem from="1523378833624" duration="2837000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="73961000" />
+    <option name="totallyTimeSpent" value="76994000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25679544" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26037195" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
@@ -244,7 +184,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.329602" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329602" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -271,8 +211,60 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#10152#10159#1" expanded="true" />
-            <marker date="1522769925765" expanded="true" signature="26975:27125" ph="..." />
+            <element signature="e#10566#10573#1" expanded="true" />
+            <marker date="1523448750730" expanded="true" signature="27506:27656" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/card.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/back.jpg">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dealdash.jpg">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hand.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hat.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="12" lean-forward="false" selection-start-line="0" selection-start-column="12" selection-end-line="0" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#10566#10573#1" expanded="true" />
+            <marker date="1523448750730" expanded="true" signature="27506:27656" ph="..." />
           </folding>
         </state>
       </provider>
@@ -303,31 +295,26 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#10152#10159#1" expanded="true" />
-            <marker date="1522769925765" expanded="true" signature="26975:27125" ph="..." />
+            <element signature="e#10566#10573#1" expanded="true" />
+            <marker date="1523448750730" expanded="true" signature="27506:27656" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app.js" />
     <entry file="file://$PROJECT_DIR$/app.js" />
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="12" lean-forward="false" selection-start-line="0" selection-start-column="12" selection-end-line="0" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/back.jpg">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hand_temp.png" />
+    <entry file="file://$PROJECT_DIR$/hand_empty.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hand_empty_inverted.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
@@ -342,7 +329,7 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hand_temp.png">
+    <entry file="file://$PROJECT_DIR$/hand.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
@@ -352,18 +339,29 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hand.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="12" lean-forward="false" selection-start-line="0" selection-start-column="12" selection-end-line="0" selection-end-column="12" />
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="970" column="37" lean-forward="false" selection-start-line="970" selection-start-column="37" selection-end-line="970" selection-end-column="37" />
+        <state relative-caret-position="2053">
+          <caret line="1043" column="34" lean-forward="false" selection-start-line="1043" selection-start-column="34" selection-end-line="1043" selection-end-column="34" />
           <folding>
-            <element signature="e#10152#10159#1" expanded="true" />
-            <marker date="1522769925765" expanded="true" signature="26975:27125" ph="..." />
+            <element signature="e#10566#10573#1" expanded="true" />
+            <marker date="1523448750730" expanded="true" signature="27506:27656" ph="..." />
           </folding>
         </state>
       </provider>
