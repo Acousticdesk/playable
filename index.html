@@ -713,6 +713,89 @@
       })();
     </script>
     <script>
+        // PubSub
+        var pubSub = {
+          events: {},
+          subscribe: function (event, cb) {
+            if (!this.events[event]) {
+              this.events[event] = [];
+            }
+    
+            this.events[event].push(cb);
+          },
+          publish: function (event, data) {
+            if (Array.isArray(this.events[event])) {
+              this.events[event].forEach(function (cb) {
+                cb(data);
+              });
+            }
+          }
+        };
+        
+        
+        
+        // Mediator
+        var mediator = Object.assign({
+          create: function () {
+            this.screen = new Screen();
+          },
+          getScreenMetrics: function () {
+            return this.screen.el.getBoundingClientRect();
+          }
+        }, pubSub);
+        
+        
+        
+        // Screen
+        function Screen () {
+          mediator.subscribe('screen/set', function (el) {
+            this.el = el;
+          }.bind(this));
+          mediator.subscribe('screen/remove', function () {
+            this.remove();
+          }.bind(this));
+          mediator.subscribe('screen/delegate-events', function (state) {
+            this.init(state);
+          }.bind(this));
+          mediator.subscribe('screen/add-card', this.addCard.bind(this));
+        }
+        
+        Screen.prototype = {
+          addCard: function (card) {
+            this.el.appendChild(card);
+          },
+          onTouchstart: function (e) {
+            mediator.publish('screen/touchstart', {
+              x: e.changedTouches && e.changedTouches[0].clientX,
+              y: e.changedTouches && e.changedTouches[0].clientY
+            });
+          },
+          onTouchend: function (e) {
+            mediator.publish('screen/touchend', {
+              x: e.changedTouches && e.changedTouches[0].clientX,
+              y: e.changedTouches && e.changedTouches[0].clientY
+            });
+          },
+          onTouchmove: function (e) {
+            mediator.publish('screen/touchmove', {
+              x: e.changedTouches && e.changedTouches[0].clientX,
+              y: e.changedTouches && e.changedTouches[0].clientY
+            });
+          },
+          remove: function () {
+            this.el.parentElement.removeChild(this.el);
+          },
+          init: function (state) {
+            this.el[state + 'EventListener']('touchstart', this.onTouchstart);
+            this.el[state + 'EventListener']('touchend', this.onTouchend);
+            this.el[state + 'EventListener']('touchmove', this.onTouchmove);
+          }
+        };
+        
+        
+        
+        // Game
+        
         var game = {
           cache: {},
           isPreview: true,
@@ -736,15 +819,10 @@
               // resEl.textContent = currentScore + 1;
             }
           },
-          setScreen: function (screen) {
-            if (!this.screen) {
-              this.screen = screen;
-            }
-          },
-          cacheCoords: function (x, y) {
+          cacheCoords: function (coords) {
             this.cache = {
-              x: x,
-              y: y
+              x: coords.x,
+              y: coords.y
             };
           },
           isBasketCollision: function () {
@@ -773,7 +851,7 @@
           },
           // Map coordinates from browser's ones to Math ones
           getCorrectCoordinates: function (value) {
-            return this.screen.clientHeight - value;
+            return mediator.getScreenMetrics().height - value;
           },
           removeCard: function () {
             this.card.remove();
@@ -832,10 +910,10 @@
               nextX = Math.sqrt( Math.pow(hyperA, 2) * (1 - Math.pow(nextY, 2) / Math.pow(hyperB, 2)) ) + this.startHereX - hyperA;
             }
             var cardLeft = window.parseInt(nextX);
-            var cardTop = this.screen.clientHeight - window.parseInt(nextY);
+            var cardTop = mediator.getScreenMetrics().height - window.parseInt(nextY);
             
             if (
-              cardLeft > this.screen.clientWidth || cardTop > this.screen.clientHeight ||
+              cardLeft > mediator.getScreenMetrics().width || cardTop > mediator.getScreenMetrics().height ||
               cardLeft < 0 || cardTop < 0
             ) {
               this.removeCard();
@@ -869,17 +947,19 @@
             ));
           },
           addCardUI: function () {
-            this.screen.appendChild(this.card);
+            // TODO: Decouple card logic?
+            mediator.publish('screen/add-card', this.card);
           },
           getCursorPosition: function (releasedX) {
-            return releasedX < this.screen.clientWidth / 2 ? 'left' : 'right';
+            // TODO: Prevent all 'getScreenMetrics' calls
+            return releasedX < mediator.getScreenMetrics().width / 2 ? 'left' : 'right';
           },
           throwCardUI: function (releasedX, releasedY) {
             // TODO: Parabola
             // var parabolaParam;
             // var param = 200;
             this.startHereX = releasedX;
-            // if (releasedX < this.screen.clientWidth / 2) {
+            // if (releasedX < mediator.getScreenMetrics().width / 2) {
             //   parabolaParam = param;
             // } else {
             //   parabolaParam = -param;
@@ -887,7 +967,7 @@
             // TODO: Log(x)
             // var parabolaParam = 500;
             // TODO: Hyperbola, Ellipsis
-            var hyperB = this.screen.clientHeight + this.basket.clientHeight;
+            var hyperB = mediator.getScreenMetrics().height + this.basket.clientHeight;
             var hyperA = hyperB / 1.75;
             var releasedSide = this.getCursorPosition(releasedX);
             
@@ -912,9 +992,9 @@
             // angleDeg = releasedSide === 'right' ? angleDeg - delta : -angleDeg + delta;
             // this.hand.style.transform = 'rotate(' + angleDeg + 'deg)';
             this.hand.classList.remove('waiting');
-            var maxHeight = this.screen.clientHeight / 2,
+            var maxHeight = mediator.getScreenMetrics().width / 2,
               deg,
-              cursorY = this.screen.clientHeight - cursorY;
+              cursorY = mediator.getScreenMetrics().height - cursorY;
             
             if (cursorY > maxHeight) {
               deg = 90;
@@ -938,7 +1018,10 @@
             this.cta.style.display = 'none';
             this.isPreview = false;
           },
-          throwCard: function (releasedX, releasedY) {
+          throwCard: function (releasedCoords) {
+            var releasedX = releasedCoords.x;
+            var releasedY = releasedCoords.y;
+            
             if (!this.card && this.isSwiped(releasedX, releasedY) && this.canThrow() && this.validHandPosition) {
               this.createCard();
               this.addCardUI();
@@ -964,9 +1047,11 @@
           setReleasedSide: function (releasedSide) {
             this.releasedSide = releasedSide;
           },
-          trackHandPosition: function (cursorX, cursorY) {
+          trackHandPosition: function (cursorCoords) {
+            var cursorX = cursorCoords.x;
+            var cursorY = cursorCoords.y;
             var releasedSide = this.getCursorPosition(cursorX);
-            var validHandPosition = cursorY > this.screen.clientHeight / 2 + this.hand.clientWidth;
+            var validHandPosition = cursorY > mediator.getScreenMetrics().height / 2 + this.hand.clientWidth;
   
             this.validHandPosition = validHandPosition;
             
@@ -1017,57 +1102,38 @@
               }
             }.bind(this), 3000);
           },
+          onScreenTouchstart: function (coords) {
+            this.makePreviewStop();
+            this.cacheCoords(coords);
+          },
           start: function (screen) {
-            var onTouchstart = function (e) {
-              this.cacheCoords(
-                e.changedTouches && e.changedTouches[0].clientX,
-                e.changedTouches && e.changedTouches[0].clientY
-              );
-            }.bind(this);
-
-            var onTouchend = function (e) {
-             this.throwCard(
-                e.changedTouches && e.changedTouches[0].clientX,
-                e.changedTouches && e.changedTouches[0].clientY
-              );
-            }.bind(this);
-
-            var onTouchmove = function (e) {
-              var x = e.changedTouches && e.changedTouches[0].clientX,
-                y = e.changedTouches && e.changedTouches[0].clientY;
-
-              this.trackHandPosition(x, y);
-            }.bind(this);
+            mediator.subscribe('screen/touchstart', this.onScreenTouchstart.bind(this));
+            mediator.subscribe('screen/touchend', this.throwCard.bind(this));
+            mediator.subscribe('screen/touchmove', this.trackHandPosition.bind(this));
             
             var onCloseBtn = function () {
                 this.close();
                 eventListeners('remove');
             }.bind(this);
             
-            var onScreenTouchstart = function () {
-              this.makePreviewStop();
-            }.bind(this);
-            
             var eventListeners = function (state) {
-              this.screen[state + 'EventListener']('touchstart', onScreenTouchstart);
-              this.screen[state + 'EventListener']('touchstart', onTouchstart);
-              this.screen[state + 'EventListener']('touchend', onTouchend);
-              this.screen[state + 'EventListener']('touchmove', onTouchmove);
+              mediator.publish('screen/delegate-events', state);
               this.closeBtn[state + 'EventListener']('click', onCloseBtn);
             }.bind(this);
 
-            this.setScreen(screen);
+            mediator.publish('screen/set', screen);
             this.startPreview();
             eventListeners('add');
           },
           close: function () {
-            this.screen.parentElement.removeChild(this.screen);
+            mediator.publish('screen/remove')
           }
         };
         
-        var screen = document.querySelector('.screen');
+        var screenEl = document.querySelector('.screen');
         
-        game.start(screen);
+        mediator.create();
+        game.start(screenEl);
     </script>
 </body>
 </html>

@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f2a2ffea-a871-43f7-859c-11867204716e" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/hand.png" afterPath="$PROJECT_DIR$/hand.png" />
-      <change beforePath="$PROJECT_DIR$/hand_inverted.png" afterPath="$PROJECT_DIR$/hand_inverted.png" />
       <change beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,11 +16,12 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2053">
-              <caret line="1043" column="34" lean-forward="false" selection-start-line="1043" selection-start-column="34" selection-end-line="1043" selection-end-column="34" />
+            <state relative-caret-position="114">
+              <caret line="911" column="50" lean-forward="true" selection-start-line="911" selection-start-column="50" selection-end-line="911" selection-end-column="50" />
               <folding>
                 <element signature="e#10566#10573#1" expanded="true" />
-                <marker date="1523448750730" expanded="true" signature="27506:27656" ph="..." />
+                <element signature="n#script#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+                <marker date="1523456796481" expanded="true" signature="30018:30168" ph="..." />
               </folding>
             </state>
           </provider>
@@ -33,19 +31,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>basketColl</find>
-      <find>.cta</find>
-      <find>get the</find>
-      <find>font-size: 30px</find>
-      <find>stop</find>
-      <find>hidden</find>
-      <find>toggle</find>
-      <find>applyHandPositionClass</find>
-      <find>track</find>
-      <find>inverted</find>
-      <find>.win-screen</find>
-      <find>.close-btn</find>
-      <find>querySeleco</find>
       <find>.parent</find>
       <find>preview</find>
       <find>original</find>
@@ -61,8 +46,21 @@
       <find>body</find>
       <find>validHand</find>
       <find>win()</find>
-      <find>throwCard</find>
       <find>resetHandAnglePo</find>
+      <find>start</find>
+      <find>this.screen =</find>
+      <find>setScreen</find>
+      <find>setScre</find>
+      <find>update</find>
+      <find>trackHand</find>
+      <find>game/set-</find>
+      <find>t</find>
+      <find>this.screenmedia</find>
+      <find>var mediat</find>
+      <find>this.screen</find>
+      <find>this.scree</find>
+      <find>throwCar</find>
+      <find>throwCard</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -164,12 +162,12 @@
       <workItem from="1521448611626" duration="51872000" />
       <workItem from="1522332201292" duration="15997000" />
       <workItem from="1522744803806" duration="6288000" />
-      <workItem from="1523378833624" duration="2837000" />
+      <workItem from="1523378833624" duration="7207000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="76994000" />
+    <option name="totallyTimeSpent" value="81364000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -212,7 +210,8 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#10566#10573#1" expanded="true" />
-            <marker date="1523448750730" expanded="true" signature="27506:27656" ph="..." />
+            <element signature="n#script#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <marker date="1523456796481" expanded="true" signature="30018:30168" ph="..." />
           </folding>
         </state>
       </provider>
@@ -264,7 +263,8 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#10566#10573#1" expanded="true" />
-            <marker date="1523448750730" expanded="true" signature="27506:27656" ph="..." />
+            <element signature="n#script#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <marker date="1523456796481" expanded="true" signature="30018:30168" ph="..." />
           </folding>
         </state>
       </provider>
@@ -296,7 +296,8 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#10566#10573#1" expanded="true" />
-            <marker date="1523448750730" expanded="true" signature="27506:27656" ph="..." />
+            <element signature="n#script#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <marker date="1523456796481" expanded="true" signature="30018:30168" ph="..." />
           </folding>
         </state>
       </provider>
@@ -357,11 +358,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2053">
-          <caret line="1043" column="34" lean-forward="false" selection-start-line="1043" selection-start-column="34" selection-end-line="1043" selection-end-column="34" />
+        <state relative-caret-position="114">
+          <caret line="911" column="50" lean-forward="true" selection-start-line="911" selection-start-column="50" selection-end-line="911" selection-end-column="50" />
           <folding>
             <element signature="e#10566#10573#1" expanded="true" />
-            <marker date="1523448750730" expanded="true" signature="27506:27656" ph="..." />
+            <element signature="n#script#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <marker date="1523456796481" expanded="true" signature="30018:30168" ph="..." />
           </folding>
         </state>
       </provider>
