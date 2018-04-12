@@ -774,6 +774,52 @@
         }
       * 
       * */
+
+
+      // this.hand.classList.remove('waiting');
+      // var tg = this.getCorrectCoordinates(cursorY) / cursorX;
+      // var angleRad = Math.atan(tg);
+      // var angleDeg = angleRad * 180 / Math.PI;
+      // var delta = 30;
+      // angleDeg = releasedSide === 'right' ? angleDeg - delta : -angleDeg + delta;
+      // this.hand.style.transform = 'rotate(' + angleDeg + 'deg)';
+      
+      
+      
+      /*
+      * 
+      * 
+      * requestAnimation: function (releasedX, releasedY) {
+            // TODO: Parabola
+            // var parabolaParam;
+            // var param = 200;
+            // TODO: ???
+            this.firstReleasedX = releasedX;
+            this.releasedSide = this.getCursorPosition(releasedX);
+            // if (releasedX < this.mediator.getScreenMetrics().width / 2) {
+            //   parabolaParam = param;
+            // } else {
+            //   parabolaParam = -param;
+            // }
+            // TODO: Log(x)
+            // var parabolaParam = 500;
+            // TODO: Hyperbola, Ellipsis Params
+            var hyperB = this.mediator.getScreenMetrics().height + this.mediator.getBasketMetrics().height;
+            var hyperA = hyperB / 1.75;
+    
+            window.requestAnimationFrame(this.updateCardCoords.bind(this,
+              this.swipeCoordinates.startX,
+              this.getCorrectCoordinates(this.swipeCoordinates.startY),
+              releasedX,
+              this.getCorrectCoordinates(releasedY),
+              // parabolaParam
+              hyperA,
+              hyperB,
+              releasedSide
+            ));
+          },
+      * 
+      * */
       
       
       
@@ -903,6 +949,14 @@
           return this.card.getMetrics();
         };
         
+        PlayableAdMediator.prototype.isValidHandPosition = function () {
+          return this.gameCore.isValidHandPosition();
+        };
+
+        PlayableAdMediator.prototype.getReleasedSide = function () {
+          return this.gameCore.getReleasedSide();
+        };
+        
         
         
         
@@ -988,11 +1042,16 @@
           this.width = 50;
           this.height = 80;
           this.speed = 10;
-          this.el = false;
+          this.el = null;
           
+          this.mediatorEvents(mediator);
+        }
+        
+        Card.prototype.mediatorEvents = function (mediator) {
           mediator.subscribe('card/create', this.onCreateCard.bind(this));
           mediator.subscribe('card/remove', this.onRemoveCard.bind(this));
-        }
+          mediator.subscribe('card/update-position', this.updatePosition.bind(this));
+        };
         
         Card.prototype.isOnScreen = function () {
           return this.el;
@@ -1026,6 +1085,11 @@
           this.el.getBoundingClientRect();
         };
         
+        Card.prototype.updatePosition = function (options) {
+          this.el.style.left = options.left + 'px';
+          this.el.style.top = options.top + 'px';
+        };
+        
         
         
         
@@ -1055,28 +1119,37 @@
             moveY: null
           };
   
-          this.isPreview = true;
+          // this.isPreview = true;
           this.isSwipedProp = false;
           
-          var setCoordinates = this.setCoordinates.bind(this);
-          
-          mediator.subscribe('screen/touchend', setCoordinates);
-          mediator.subscribe('screen/touchstart', setCoordinates);
-          mediator.subscribe('core/create-winscreen', this.createWinScreen.bind(this));
-          mediator.subscribe('core/start', this.start.bind(this));
-          mediator.subscribe('screen/touchmove', function (coordinates) {
-            setCoordinates(coordinates);
-            this.updateIsSwiped();
-          }.bind(this));
+          this.mediatorEvents(mediator);
         }
         
         GameCore.prototype = {
+          mediatorEvents: function (mediator) {
+            var setCoordinates = this.setCoordinates.bind(this);
+  
+            mediator.subscribe('screen/touchend', setCoordinates);
+            mediator.subscribe('screen/touchstart', function (coordinates) {
+              setCoordinates(coordinates);
+              this.makePreviewStop();
+            }.bind(this));
+            mediator.subscribe('core/create-winscreen', this.createWinScreen.bind(this));
+            mediator.subscribe('core/calculate-hand-angle', this.calculateAngle.bind(this));
+            mediator.subscribe('screen/touchmove', function (coordinates) {
+              setCoordinates(coordinates);
+              this.updateIsSwiped();
+            }.bind(this));
+          },
           setCoordinates: function (coordinates) {
             for (var key in coordinates) {
               if (coordinates.hasOwnProperty(key)) {
                 this.swipeCoordinates[key] = coordinates[key];
               }
             }
+          },
+          getReleasedSide: function () {
+            return this.releasedSide;
           },
           createWinScreen: function () {
             window.Ad.create();
@@ -1101,22 +1174,25 @@
               !this.mediator.isCardOnScreen() &&
               this.isSwiped() &&
               this.canThrow() &&
-              this.validHandPosition
+              this.isValidHandPosition
             ) {
               this.mediator.publish('card/create', {
                 isPlaceholder: false,
-                y: this.swipeCoordinates.startY,
                 x: this.swipeCoordinates.startX,
+                y: this.swipeCoordinates.startY,
                 offset: this.mediator.getHandMetrics().width / 2
               });
               this.requestAnimation(
                 this.swipeCoordinates.releasedX - this.mediator.getBasketMetrics().width / 2,
                 this.swipeCoordinates.releasedY
               );
-              this.applyHandEmptyClass();
+              this.mediator.publish('ui/hand-empty');
             } else {
-              this.resetHandAnglePosition();
+              this.mediator.publish('ui/reset-hand-angle');
             }
+          },
+          isValidHandPosition: function (cursorY) {
+            return cursorY > this.mediator.getScreenMetrics().height / 2 + this.mediator.getHandMetrics().width;
           },
           // Map coordinates from browser's ones to Math ones
           getCorrectCoordinates: function (value) {
@@ -1127,22 +1203,11 @@
           },
           // TODO: Why getting through params, instead of Class props?
           requestAnimation: function (releasedX, releasedY) {
-            // TODO: Parabola
-            // var parabolaParam;
-            // var param = 200;
-            // TODO: ???
             this.firstReleasedX = releasedX;
-            // if (releasedX < this.mediator.getScreenMetrics().width / 2) {
-            //   parabolaParam = param;
-            // } else {
-            //   parabolaParam = -param;
-            // }
-            // TODO: Log(x)
-            // var parabolaParam = 500;
-            // TODO: Hyperbola, Ellipsis Params
+            this.releasedSide = this.getCursorPosition(releasedX);
+            
             var hyperB = this.mediator.getScreenMetrics().height + this.mediator.getBasketMetrics().height;
             var hyperA = hyperB / 1.75;
-            var releasedSide = this.getCursorPosition(releasedX);
     
             window.requestAnimationFrame(this.updateCardCoords.bind(this,
               this.swipeCoordinates.startX,
@@ -1151,8 +1216,7 @@
               this.getCorrectCoordinates(releasedY),
               // parabolaParam
               hyperA,
-              hyperB,
-              releasedSide
+              hyperB
             ));
           },
           isBasketCollision: function () {
@@ -1170,13 +1234,13 @@
               return true;
             }
           },
-          updateCardCoords: function (x1, y1, x2, y2, hyperA, hyperB, releasedSide) {
+          updateCardCoords: function (x1, y1, x2, y2, hyperA, hyperB) {
             var nextX;
             var nextY = y2 + this.mediator.getCardSpeed();
             
-            if (releasedSide === 'left') {
+            if (this.releasedSide === 'left') {
               nextX = -(Math.sqrt( Math.pow(hyperA, 2) * (1 - Math.pow(nextY, 2) / Math.pow(hyperB, 2)) )) +  hyperA + this.firstReleasedX;
-            } else if (releasedSide === 'right') {
+            } else if (this.releasedSide === 'right') {
               nextX = Math.sqrt( Math.pow(hyperA, 2) * (1 - Math.pow(nextY, 2) / Math.pow(hyperB, 2)) ) + this.firstReleasedX - hyperA;
             }
             var cardLeft = window.parseInt(nextX);
@@ -1202,8 +1266,10 @@
               return;
             }
     
-            this.card.style.left = cardLeft + 'px';
-            this.card.style.top = cardTop + 'px';
+            this.mediator.publish('card/update-position', {
+              left: cardLeft,
+              top: cardTop
+            });
     
             window.requestAnimationFrame(this.updateCardCoords.bind(this,
               x2,
@@ -1211,26 +1277,25 @@
               nextX,
               nextY,
               hyperA,
-              hyperB,
-              releasedSide
+              hyperB
             ));
           },
           preview: function (random) {
             var handBox;
     
             if (!this.card) {
-              handBox = this.hand.getBoundingClientRect();
-              this.cache.x = handBox.left + handBox.width / 2 + random;
-              this.cache.y = handBox.top;
+              handBox = this.mediator.getHandMetrics();
+              this.swipeCoordinates.startX = handBox.left + handBox.width / 2 + random;
+              this.swipeCoordinates.startY = handBox.top;
               this.mediator.publish('card/create', {
                 isPlaceholder: true,
-                y: this.cache.y,
-                x: this.cache.x,
-                offset: this.hand.clientWidth / 2
+                x: this.swipeCoordinates.startX,
+                y: this.swipeCoordinates.startY,
+                offset: handBox.width / 2
               });
               this.requestAnimation(
-                this.cache.x,
-                this.cache.y + 20
+                this.swipeCoordinates.startX,
+                this.swipeCoordinates.startY
               );
             }
           },
@@ -1239,22 +1304,11 @@
           },
           stopPreview: function () {
             window.clearInterval(this.previewInterval);
-            this.cta.style.display = 'none';
-            this.isPreview = false;
-          },
-          setReleasedSide: function (releasedSide) {
-            this.releasedSide = releasedSide;
+            this.mediator.publish('ui/hide-cta');
+            // this.isPreview = false;
           },
           // TODO: Change formula for hand pre-throw 
-          calculateAngle: function (cursorX, cursorY, releasedSide) {
-            // this.hand.classList.remove('waiting');
-            // var tg = this.getCorrectCoordinates(cursorY) / cursorX;
-            // var angleRad = Math.atan(tg);
-            // var angleDeg = angleRad * 180 / Math.PI;
-            // var delta = 30;
-            // angleDeg = releasedSide === 'right' ? angleDeg - delta : -angleDeg + delta;
-            // this.hand.style.transform = 'rotate(' + angleDeg + 'deg)';
-            this.hand.classList.remove('waiting');
+          calculateAngle: function (cursorX, cursorY) {
             var maxHeight = this.mediator.getScreenMetrics().width / 2,
               deg,
               cursorY = this.mediator.getScreenMetrics().height - cursorY;
@@ -1264,8 +1318,10 @@
             } else {
               deg = cursorY / maxHeight * 90;
             }
-    
-            this.hand.style.transform = 'rotate(' + (releasedSide === 'right' ? deg : -deg) + 'deg)';
+  
+            this.mediator.publish('ui/update-hand-position', {
+              deg: deg
+            });
           },
           makePreviewStop: function () {
             this.shouldStopPreview = true;
@@ -1289,12 +1345,6 @@
                 }
               }
             }.bind(this), 3000);
-          },
-          onScreenTouchstart: function () {
-            this.makePreviewStop();
-          },
-          start: function () {
-            
           }
         };
         
@@ -1323,15 +1373,25 @@
           this.basket = document.querySelector('.basket');
           this.winScreen = document.querySelector('.win-screen');
           this.cta = document.querySelector('.cta');
-  
-          mediator.subscribe('screen/touchstart', this.onScreenTouchstart.bind(this));
-          mediator.subscribe('screen/touchmove', this.trackHandPosition.bind(this));
-          mediator.subscribe('ui/reset-assets-classes', this.resetAssetsClasses.bind(this));
-          mediator.subscribe('ui/basket-hit', this.onBasketHit.bind(this));
-          mediator.subscribe('ui/show-winscreen', this.showWinScreen.bind(this));
+          this.isValidHandPosition = true;
+          
+          this.mediatorEvents(mediator);
         }
         
         GameUI.prototype = {
+          mediatorEvents: function (mediator) {
+            mediator.subscribe('screen/touchmove', this.trackHandPosition.bind(this));
+            mediator.subscribe('ui/reset-assets-classes', this.resetAssetsClasses.bind(this));
+            mediator.subscribe('ui/basket-hit', this.onBasketHit.bind(this));
+            mediator.subscribe('ui/show-winscreen', this.showWinScreen.bind(this));
+            mediator.subscribe('ui/update-hand-position', this.updateHandPosition.bind(this));
+            mediator.subscribe('ui/hide-cta', this.hideCta.bind(this));
+            mediator.subscribe('ui/reset-hand-angle', this.resetHandAnglePosition.bind(this));
+            mediator.subscribe('ui/hand-empty', this.applyHandEmptyClass.bind(this));
+          },
+          hideCta: function () {
+            this.cta.style.display = 'none';
+          },
           onBasketHit: function () {
             this.basket.classList.add('hit');
           },
@@ -1340,13 +1400,16 @@
               this.basket.classList.remove('hit');
               this.hand.classList.add('waiting');
               // TODO: May be a problem
-              this.hand.classList.add('original');
-              this.hand.classList.remove('inverted');
-              this.hand.classList.remove('original-empty');
-              this.hand.classList.remove('inverted-empty');
-              this.hand.style.left = '';
-              this.hand.style.top = '';
+              this.resetHandAnglePosition();
             }.bind(this), 1000);
+          },
+          resetHandAnglePosition: function () {
+            this.hand.classList.add('original');
+            this.hand.classList.remove('inverted');
+            this.hand.classList.remove('original-empty');
+            this.hand.classList.remove('inverted-empty');
+            this.hand.style.left = '';
+            this.hand.style.top = '';
           },
           showWinScreen: function () {
             var onTransitionend = function (e) {
@@ -1360,15 +1423,18 @@
             this.winScreen.classList.add('show');
           },
           applyHandEmptyClass: function () {
-            this.hand.classList.toggle('original-empty', this.releasedSide === 'left');
-            this.hand.classList.toggle('inverted-empty', this.releasedSide === 'right');
+            var releasedSide = this.mediator.getReleasedSide();
+            // TODO: Make it cross-browser
+            this.hand.classList.toggle('original-empty', releasedSide === 'left');
+            this.hand.classList.toggle('inverted-empty', releasedSide === 'right');
           },
-          applyHandPositionClass: function (releasedSide) {
+          applyHandPositionClass: function () {
+            var releasedSide = this.mediator.getReleasedSide();
+            // TODO: Make it cross-browser
             this.hand.classList.toggle('original', releasedSide === 'left');
             this.hand.classList.toggle('inverted', releasedSide === 'right');
           },
           moveHand: function (cursorX, cursorY) {
-            // this.hand.style.left = cursorX + this.hand.clientWidth / 2 + 'px';
             this.hand.style.left = cursorX + 'px';
             this.hand.style.top = cursorY - this.hand.clientHeight / 2 + 'px';
           },
@@ -1381,23 +1447,25 @@
           trackHandPosition: function (cursorCoords) {
             var cursorX = cursorCoords.x;
             var cursorY = cursorCoords.y;
-            var releasedSide = this.getCursorPosition(cursorX);
-            var validHandPosition = cursorY > this.mediator.getScreenMetrics().height / 2 + this.hand.clientWidth;
+            
+            var releasedSide = this.mediator.getReleasedSide();
     
-            this.validHandPosition = validHandPosition;
+            this.isValidHandPosition = this.mediator.isValidHandPosition(cursorY);
     
-            if (!validHandPosition) {
+            if (!this.isValidHandPosition) {
               return;
             }
     
-            this.calculateAngle(cursorX, cursorY, releasedSide);
+            this.mediator.publish('core/calculate-hand-angle');
             this.moveHand(cursorX, cursorY);
-            this.setReleasedSide(releasedSide);
             this.applyHandPositionClass(releasedSide);
           },
-          create: function () {
-            // TODO: ??
-            this.mediator.publish('core/start');
+          updateHandPosition: function (options) {
+            var releasedSide = this.mediator.getReleasedSide();
+            
+            this.hand.classList.remove('waiting');
+            this.hand.style.transform =
+              'rotate(' + (releasedSide === 'right' ? options.deg : -options.deg) + 'deg)';
           }
         };
         

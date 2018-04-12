@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f2a2ffea-a871-43f7-859c-11867204716e" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,12 +16,12 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-6116">
-              <caret line="865" column="8" lean-forward="true" selection-start-line="865" selection-start-column="8" selection-end-line="865" selection-end-column="8" />
+            <state relative-caret-position="3698">
+              <caret line="1141" column="26" lean-forward="true" selection-start-line="1141" selection-start-column="26" selection-end-line="1141" selection-end-column="26" />
               <folding>
                 <element signature="e#10566#10573#1" expanded="true" />
                 <element signature="e#13787#23170#0" expanded="false" />
-                <marker date="1523543875642" expanded="true" signature="26722:27366" ph="..." />
+                <marker date="1523554638614" expanded="true" signature="28332:28976" ph="..." />
               </folding>
             </state>
           </provider>
@@ -32,36 +31,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>createCard</find>
-      <find>function Pla</find>
-      <find>addCardUi</find>
-      <find>prototype.create</find>
-      <find>screen/add-card</find>
-      <find>addCardUI</find>
-      <find>card/create</find>
-      <find>'card/create'</find>
-      <find>throwcardUI</find>
-      <find>throwCardUI</find>
-      <find>startHereX</find>
-      <find>new Game</find>
-      <find>screen/touchend</find>
-      <find>screen/touchstart</find>
-      <find>screen/touchmove</find>
-      <find>function SCreen</find>
-      <find>throwCard</find>
-      <find>canThrow</find>
-      <find>validHandPosition</find>
-      <find>function pla</find>
-      <find>getBasketMetric</find>
-      <find>function play</find>
-      <find>startHere</find>
-      <find>function Card</find>
-      <find>card/reove</find>
       <find>card/remove</find>
       <find>ui/basket-hit</find>
       <find>ui/reset-assets-classes</find>
       <find>function pl</find>
       <find>getMetrics</find>
+      <find>win()</find>
+      <find>this.relea</find>
+      <find>trackHandPosition</find>
+      <find>getCu</find>
+      <find>playable</find>
+      <find>isValidHandPosition</find>
+      <find>resetHandAnglePosition</find>
+      <find>applyHand</find>
+      <find>requestAnima</find>
+      <find>function pla</find>
+      <find>function GameCore</find>
+      <find>releasedSide</find>
+      <find>getCursorPosition</find>
+      <find>core/start</find>
+      <find>showWinScreen</find>
+      <find>makePreviewStop</find>
+      <find>onScreenTouchstart</find>
+      <find>onScreenTouchs</find>
+      <find>previewInterval</find>
+      <find>shouldStopPreview</find>
+      <find>isPreview</find>
+      <find>requestAnimation</find>
+      <find>resetHandAn</find>
+      <find>applyhandEmp</find>
+      <find>function Card</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -163,12 +162,12 @@
       <workItem from="1521448611626" duration="51872000" />
       <workItem from="1522332201292" duration="15997000" />
       <workItem from="1522744803806" duration="6288000" />
-      <workItem from="1523378833624" duration="22077000" />
+      <workItem from="1523378833624" duration="25715000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="96234000" />
+    <option name="totallyTimeSpent" value="99872000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -202,7 +201,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="3" />
+      <option name="time" value="5" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -214,7 +213,7 @@
           <folding>
             <element signature="e#10566#10573#1" expanded="true" />
             <element signature="e#13787#23170#0" expanded="false" />
-            <marker date="1523543875642" expanded="true" signature="26722:27366" ph="..." />
+            <marker date="1523554638614" expanded="true" signature="28332:28976" ph="..." />
           </folding>
         </state>
       </provider>
@@ -267,7 +266,7 @@
           <folding>
             <element signature="e#10566#10573#1" expanded="true" />
             <element signature="e#13787#23170#0" expanded="false" />
-            <marker date="1523543875642" expanded="true" signature="26722:27366" ph="..." />
+            <marker date="1523554638614" expanded="true" signature="28332:28976" ph="..." />
           </folding>
         </state>
       </provider>
@@ -300,7 +299,7 @@
           <folding>
             <element signature="e#10566#10573#1" expanded="true" />
             <element signature="e#13787#23170#0" expanded="false" />
-            <marker date="1523543875642" expanded="true" signature="26722:27366" ph="..." />
+            <marker date="1523554638614" expanded="true" signature="28332:28976" ph="..." />
           </folding>
         </state>
       </provider>
@@ -369,12 +368,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-6116">
-          <caret line="865" column="8" lean-forward="true" selection-start-line="865" selection-start-column="8" selection-end-line="865" selection-end-column="8" />
+        <state relative-caret-position="3698">
+          <caret line="1141" column="26" lean-forward="true" selection-start-line="1141" selection-start-column="26" selection-end-line="1141" selection-end-column="26" />
           <folding>
             <element signature="e#10566#10573#1" expanded="true" />
             <element signature="e#13787#23170#0" expanded="false" />
-            <marker date="1523543875642" expanded="true" signature="26722:27366" ph="..." />
+            <marker date="1523554638614" expanded="true" signature="28332:28976" ph="..." />
           </folding>
         </state>
       </provider>
