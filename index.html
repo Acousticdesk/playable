@@ -905,7 +905,7 @@
             this.gameUI
           );
           
-          this.gameUI.create();
+          this.gameCore.startPreview();
         }
         
         PlayableAdMediator.prototype = Object.create(PubSub.prototype);
@@ -984,7 +984,6 @@
           this.el = document.querySelector('.screen');
           this.closeBtn = document.querySelector('.close-btn');
           
-          // TODO: Unsemantic event names
           mediator.subscribe('screen/add-card', this.addCard.bind(this));
           this.domEvents('add');
         }
@@ -1082,7 +1081,7 @@
         };
         
         Card.prototype.getMetrics = function () {
-          this.el.getBoundingClientRect();
+          return this.el.getBoundingClientRect();
         };
         
         Card.prototype.updatePosition = function (options) {
@@ -1129,7 +1128,10 @@
           mediatorEvents: function (mediator) {
             var setCoordinates = this.setCoordinates.bind(this);
   
-            mediator.subscribe('screen/touchend', setCoordinates);
+            mediator.subscribe('screen/touchend', function (coordinates) {
+              setCoordinates(coordinates);
+              this.throwCard();
+            }.bind(this));
             mediator.subscribe('screen/touchstart', function (coordinates) {
               setCoordinates(coordinates);
               this.makePreviewStop();
@@ -1139,7 +1141,11 @@
             mediator.subscribe('screen/touchmove', function (coordinates) {
               setCoordinates(coordinates);
               this.updateIsSwiped();
+              this.setReleasedSide(coordinates.moveX);
             }.bind(this));
+          },
+          setReleasedSide: function (moveX) {
+            this.releasedSide = this.getCursorPosition(moveX);
           },
           setCoordinates: function (coordinates) {
             for (var key in coordinates) {
@@ -1174,7 +1180,7 @@
               !this.mediator.isCardOnScreen() &&
               this.isSwiped() &&
               this.canThrow() &&
-              this.isValidHandPosition
+              this.isValidHandPosition()
             ) {
               this.mediator.publish('card/create', {
                 isPlaceholder: false,
@@ -1191,8 +1197,8 @@
               this.mediator.publish('ui/reset-hand-angle');
             }
           },
-          isValidHandPosition: function (cursorY) {
-            return cursorY > this.mediator.getScreenMetrics().height / 2 + this.mediator.getHandMetrics().width;
+          isValidHandPosition: function () {
+            return this.swipeCoordinates.moveY > this.mediator.getScreenMetrics().height / 2 + this.mediator.getHandMetrics().width;
           },
           // Map coordinates from browser's ones to Math ones
           getCorrectCoordinates: function (value) {
@@ -1204,7 +1210,6 @@
           // TODO: Why getting through params, instead of Class props?
           requestAnimation: function (releasedX, releasedY) {
             this.firstReleasedX = releasedX;
-            this.releasedSide = this.getCursorPosition(releasedX);
             
             var hyperB = this.mediator.getScreenMetrics().height + this.mediator.getBasketMetrics().height;
             var hyperA = hyperB / 1.75;
@@ -1308,17 +1313,19 @@
             // this.isPreview = false;
           },
           // TODO: Change formula for hand pre-throw 
-          calculateAngle: function (cursorX, cursorY) {
+          calculateAngle: function () {
             var maxHeight = this.mediator.getScreenMetrics().width / 2,
               deg,
-              cursorY = this.mediator.getScreenMetrics().height - cursorY;
+              cursorY = this.mediator.getScreenMetrics().height - this.swipeCoordinates.moveY;
     
             if (cursorY > maxHeight) {
               deg = 90;
             } else {
               deg = cursorY / maxHeight * 90;
             }
-  
+            
+            console.log(deg);
+            
             this.mediator.publish('ui/update-hand-position', {
               deg: deg
             });
@@ -1373,7 +1380,6 @@
           this.basket = document.querySelector('.basket');
           this.winScreen = document.querySelector('.win-screen');
           this.cta = document.querySelector('.cta');
-          this.isValidHandPosition = true;
           
           this.mediatorEvents(mediator);
         }
@@ -1431,10 +1437,15 @@
           applyHandPositionClass: function () {
             var releasedSide = this.mediator.getReleasedSide();
             // TODO: Make it cross-browser
+            console.log('option 2');
             this.hand.classList.toggle('original', releasedSide === 'left');
             this.hand.classList.toggle('inverted', releasedSide === 'right');
           },
-          moveHand: function (cursorX, cursorY) {
+          moveHand: function () {
+            var swipeCoordinates = this.mediator.getSwipeCoordinates();
+            var cursorX = swipeCoordinates.moveX;
+            var cursorY = swipeCoordinates.moveY;
+            
             this.hand.style.left = cursorX + 'px';
             this.hand.style.top = cursorY - this.hand.clientHeight / 2 + 'px';
           },
@@ -1444,20 +1455,15 @@
           getHandMetrics: function () {
             return this.hand.getBoundingClientRect();
           },
-          trackHandPosition: function (cursorCoords) {
-            var cursorX = cursorCoords.x;
-            var cursorY = cursorCoords.y;
-            
+          trackHandPosition: function () {
             var releasedSide = this.mediator.getReleasedSide();
     
-            this.isValidHandPosition = this.mediator.isValidHandPosition(cursorY);
-    
-            if (!this.isValidHandPosition) {
+            if ( !this.mediator.isValidHandPosition() ) {
               return;
             }
-    
+            
             this.mediator.publish('core/calculate-hand-angle');
-            this.moveHand(cursorX, cursorY);
+            this.moveHand();
             this.applyHandPositionClass(releasedSide);
           },
           updateHandPosition: function (options) {
