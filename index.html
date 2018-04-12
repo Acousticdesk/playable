@@ -714,8 +714,11 @@
     </script>
     <script>
         // PubSub
-        var pubSub = {
-          events: {},
+        function PubSub () {
+          this.events = {};
+        }
+        
+        PubSub.prototype = {
           subscribe: function (event, cb) {
             if (!this.events[event]) {
               this.events[event] = [];
@@ -734,30 +737,77 @@
         
         
         
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         // Mediator
-        var mediator = Object.assign({
-          create: function () {
-            this.screen = new Screen();
-          },
-          getScreenMetrics: function () {
-            return this.screen.el.getBoundingClientRect();
-          }
-        }, pubSub);
+        // TODO: Is not compatible with SHIT Internet explorer
+        // var mediator = Object.assign({
+        //   create: function (screen) {
+        //     this.screen = new Screen(screen);
+        //     this.game = game;
+        //    
+        //     this.subscribe('screen/touchstart', this.game.onScreenTouchstart.bind(this));
+        //     this.subscribe('screen/touchend', this.game.throwCard.bind(this));
+        //     this.subscribe('screen/touchmove', this.game.trackHandPosition.bind(this));
+        //    
+        //     this.game.start();
+        //   },
+        //   getScreenMetrics: function () {
+        //     return this.screen.el.getBoundingClientRect();
+        //   }
+        // }, pubSub);
+        
+        function PlayableAdMediator () {
+          PubSub.call(this);
+          
+          this.screen = new Screen(this);
+          this.game = new Game(this);
+
+          this.register(this.screen, this.game);
+          
+          this.game.start();
+        }
+        
+        PlayableAdMediator.prototype = Object.create(PubSub.prototype);
+        
+        PlayableAdMediator.prototype.register = function () {
+          var queue = Array.prototype.slice.call(arguments);
+          
+          queue.forEach(function (p) {
+            p.mediator = this;
+          }.bind(this));
+        };
+        
+        PlayableAdMediator.prototype.getScreenMetrics = function () {
+          return this.screen.el.getBoundingClientRect();
+        };
+        
+        
+        
+        
+        
+        
+        
+        
         
         
         
         // Screen
-        function Screen () {
-          mediator.subscribe('screen/set', function (el) {
-            this.el = el;
-          }.bind(this));
-          mediator.subscribe('screen/remove', function () {
-            this.remove();
-          }.bind(this));
-          mediator.subscribe('screen/delegate-events', function (state) {
-            this.init(state);
-          }.bind(this));
+        function Screen (mediator) {
+          this.el = document.querySelector('.screen');
+          this.closeBtn = document.querySelector('.close-btn');
+  
           mediator.subscribe('screen/add-card', this.addCard.bind(this));
+          this.domEvents('add');
         }
         
         Screen.prototype = {
@@ -765,55 +815,77 @@
             this.el.appendChild(card);
           },
           onTouchstart: function (e) {
-            mediator.publish('screen/touchstart', {
+            this.mediator.publish('screen/touchstart', {
               x: e.changedTouches && e.changedTouches[0].clientX,
               y: e.changedTouches && e.changedTouches[0].clientY
             });
           },
           onTouchend: function (e) {
-            mediator.publish('screen/touchend', {
+            this.mediator.publish('screen/touchend', {
               x: e.changedTouches && e.changedTouches[0].clientX,
               y: e.changedTouches && e.changedTouches[0].clientY
             });
           },
           onTouchmove: function (e) {
-            mediator.publish('screen/touchmove', {
+            this.mediator.publish('screen/touchmove', {
               x: e.changedTouches && e.changedTouches[0].clientX,
               y: e.changedTouches && e.changedTouches[0].clientY
             });
           },
           remove: function () {
+            this.domEvents('remove');
             this.el.parentElement.removeChild(this.el);
           },
-          init: function (state) {
-            this.el[state + 'EventListener']('touchstart', this.onTouchstart);
-            this.el[state + 'EventListener']('touchend', this.onTouchend);
-            this.el[state + 'EventListener']('touchmove', this.onTouchmove);
+          domEvents: function (state) {
+            this.el[state + 'EventListener']('touchstart', this.onTouchstart.bind(this));
+            this.el[state + 'EventListener']('touchend', this.onTouchend.bind(this));
+            this.el[state + 'EventListener']('touchmove', this.onTouchmove.bind(this));
+            this.closeBtn[state + 'EventListener']('click', this.remove.bind(this));
           }
         };
         
         
         
-        // Game
         
-        var game = {
-          cache: {},
-          isPreview: true,
-          cardSpeed: 10,
-          animationDuration: 500,
-          cardWidth: 50,
-          cardHeight: 80,
-          hand: document.querySelector('.hand'),
-          basket: document.querySelector('.basket'),
-          winScreen: document.querySelector('.win-screen'),
-          cta: document.querySelector('.cta'),
-          closeBtn: document.querySelector('.close-btn'),
-          scoreVal: 0,
-          
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        // Game
+        function Game (mediator) {
+          this.cache = {};
+          this.isPreview = true;
+          this.cardSpeed = 10;
+          this.animationDuration = 500;
+          this.cardWidth = 50;
+          this.cardHeight = 80;
+          this.hand = document.querySelector('.hand');
+          this.basket = document.querySelector('.basket');
+          this.winScreen = document.querySelector('.win-screen');
+          this.cta = document.querySelector('.cta');
+          this.scoreVal = 0;
+  
+          mediator.subscribe('screen/touchstart', this.onScreenTouchstart.bind(this));
+          mediator.subscribe('screen/touchend', this.throwCard.bind(this));
+          mediator.subscribe('screen/touchmove', this.trackHandPosition.bind(this));
+        }
+        
+        Game.prototype = {
           score: function () {
             // var resEl = document.querySelector('.score-result');
             // var currentScore = window.parseInt(resEl.textContent);
-
+    
             if (!this.isPreview) {
               this.scoreVal += 1;
               // resEl.textContent = currentScore + 1;
@@ -832,7 +904,7 @@
             var basketHoleDiffBottom = basketRect.height - basketHoleOnPictureDiff;
             var basketHoleDiffTop = basketRect.height / 4;
             var sideDiff = basketRect.width / 2;
-            
+    
             if (elRect.left < basketRect.left + basketRect.width - sideDiff &&
               elRect.left + elRect.width > basketRect.left + sideDiff &&
               elRect.top < basketRect.top + basketHoleOnPictureDiff &&
@@ -851,7 +923,7 @@
           },
           // Map coordinates from browser's ones to Math ones
           getCorrectCoordinates: function (value) {
-            return mediator.getScreenMetrics().height - value;
+            return this.mediator.getScreenMetrics().height - value;
           },
           removeCard: function () {
             this.card.remove();
@@ -872,7 +944,7 @@
                 this.winScreen.removeEventListener('transitionend', onTransitionend);
               }
             }.bind(this);
-
+    
             this.winScreen.addEventListener('transitionend', onTransitionend);
             this.winScreen.classList.add('show');
           },
@@ -910,17 +982,17 @@
               nextX = Math.sqrt( Math.pow(hyperA, 2) * (1 - Math.pow(nextY, 2) / Math.pow(hyperB, 2)) ) + this.startHereX - hyperA;
             }
             var cardLeft = window.parseInt(nextX);
-            var cardTop = mediator.getScreenMetrics().height - window.parseInt(nextY);
-            
+            var cardTop = this.mediator.getScreenMetrics().height - window.parseInt(nextY);
+    
             if (
-              cardLeft > mediator.getScreenMetrics().width || cardTop > mediator.getScreenMetrics().height ||
+              cardLeft > this.mediator.getScreenMetrics().width || cardTop > this.mediator.getScreenMetrics().height ||
               cardLeft < 0 || cardTop < 0
             ) {
               this.removeCard();
               this.resetHandAnglePosition();
               return;
             }
-            
+    
             // TODO: find better place for this condition
             if (this.isBasketCollision()) {
               this.removeCard();
@@ -932,10 +1004,10 @@
               this.resetHandAnglePosition();
               return;
             }
-            
+    
             this.card.style.left = cardLeft + 'px';
             this.card.style.top = cardTop + 'px';
-            
+    
             window.requestAnimationFrame(this.updateCardCoords.bind(this,
               x2,
               y2,
@@ -948,18 +1020,18 @@
           },
           addCardUI: function () {
             // TODO: Decouple card logic?
-            mediator.publish('screen/add-card', this.card);
+            this.mediator.publish('screen/add-card', this.card);
           },
           getCursorPosition: function (releasedX) {
             // TODO: Prevent all 'getScreenMetrics' calls
-            return releasedX < mediator.getScreenMetrics().width / 2 ? 'left' : 'right';
+            return releasedX < this.mediator.getScreenMetrics().width / 2 ? 'left' : 'right';
           },
           throwCardUI: function (releasedX, releasedY) {
             // TODO: Parabola
             // var parabolaParam;
             // var param = 200;
             this.startHereX = releasedX;
-            // if (releasedX < mediator.getScreenMetrics().width / 2) {
+            // if (releasedX < this.mediator.getScreenMetrics().width / 2) {
             //   parabolaParam = param;
             // } else {
             //   parabolaParam = -param;
@@ -967,10 +1039,10 @@
             // TODO: Log(x)
             // var parabolaParam = 500;
             // TODO: Hyperbola, Ellipsis
-            var hyperB = mediator.getScreenMetrics().height + this.basket.clientHeight;
+            var hyperB = this.mediator.getScreenMetrics().height + this.basket.clientHeight;
             var hyperA = hyperB / 1.75;
             var releasedSide = this.getCursorPosition(releasedX);
-            
+    
             window.requestAnimationFrame(this.updateCardCoords.bind(this,
               this.cache.x,
               this.getCorrectCoordinates(this.cache.y),
@@ -992,16 +1064,16 @@
             // angleDeg = releasedSide === 'right' ? angleDeg - delta : -angleDeg + delta;
             // this.hand.style.transform = 'rotate(' + angleDeg + 'deg)';
             this.hand.classList.remove('waiting');
-            var maxHeight = mediator.getScreenMetrics().width / 2,
+            var maxHeight = this.mediator.getScreenMetrics().width / 2,
               deg,
-              cursorY = mediator.getScreenMetrics().height - cursorY;
-            
+              cursorY = this.mediator.getScreenMetrics().height - cursorY;
+    
             if (cursorY > maxHeight) {
               deg = 90;
             } else {
               deg = cursorY / maxHeight * 90;
             }
-            
+    
             this.hand.style.transform = 'rotate(' + (releasedSide === 'right' ? deg : -deg) + 'deg)';
           },
           isSwiped: function (releasedX, releasedY) {
@@ -1021,7 +1093,7 @@
           throwCard: function (releasedCoords) {
             var releasedX = releasedCoords.x;
             var releasedY = releasedCoords.y;
-            
+    
             if (!this.card && this.isSwiped(releasedX, releasedY) && this.canThrow() && this.validHandPosition) {
               this.createCard();
               this.addCardUI();
@@ -1051,14 +1123,14 @@
             var cursorX = cursorCoords.x;
             var cursorY = cursorCoords.y;
             var releasedSide = this.getCursorPosition(cursorX);
-            var validHandPosition = cursorY > mediator.getScreenMetrics().height / 2 + this.hand.clientWidth;
-  
+            var validHandPosition = cursorY > this.mediator.getScreenMetrics().height / 2 + this.hand.clientWidth;
+    
             this.validHandPosition = validHandPosition;
-            
+    
             if (!validHandPosition) {
               return;
             }
-            
+    
             this.calculateAngle(cursorX, cursorY, releasedSide);
             this.moveHand(cursorX, cursorY);
             this.setReleasedSide(releasedSide);
@@ -1066,7 +1138,7 @@
           },
           preview: function (random) {
             var handBox;
-            
+    
             if (!this.card) {
               handBox = this.hand.getBoundingClientRect();
               this.cache.x = handBox.left + handBox.width / 2 + random;
@@ -1085,12 +1157,12 @@
           startPreview: function () {
             this.previewInterval = window.setInterval(function () {
               var random;
-              
+      
               if (this.shouldStopPreview) {
                 this.stopPreview();
                 return;
               }
-              
+      
               if (document.hasFocus()) {
                 random = this.getRandomArbitrary(-20, 20);
                 this.preview(random);
@@ -1107,33 +1179,13 @@
             this.cacheCoords(coords);
           },
           start: function (screen) {
-            mediator.subscribe('screen/touchstart', this.onScreenTouchstart.bind(this));
-            mediator.subscribe('screen/touchend', this.throwCard.bind(this));
-            mediator.subscribe('screen/touchmove', this.trackHandPosition.bind(this));
-            
-            var onCloseBtn = function () {
-                this.close();
-                eventListeners('remove');
-            }.bind(this);
-            
-            var eventListeners = function (state) {
-              mediator.publish('screen/delegate-events', state);
-              this.closeBtn[state + 'EventListener']('click', onCloseBtn);
-            }.bind(this);
-
-            mediator.publish('screen/set', screen);
             this.startPreview();
-            eventListeners('add');
-          },
-          close: function () {
-            mediator.publish('screen/remove')
           }
         };
         
-        var screenEl = document.querySelector('.screen');
         
-        mediator.create();
-        game.start(screenEl);
+        // APP
+        var playableAd = new PlayableAdMediator();
     </script>
 </body>
 </html>
