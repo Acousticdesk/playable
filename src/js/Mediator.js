@@ -78,9 +78,9 @@ export default class PlayableAdMediator extends PubSub {
     return this.card.getMetrics();
   }
   
-  isValidHandPosition () {
-    return this.gameCore.isValidHandPosition();
-  }
+  // isValidHandPosition () {
+  //   return this.gameCore.isValidHandPosition();
+  // }
   
   getReleasedSide () {
     return this.gameCore.getReleasedSide();

@@ -69,8 +69,8 @@ GameCore.prototype = {
     if (
       !this.mediator.isCardOnScreen() &&
       this.isSwiped() &&
-      this.canThrow() &&
-      this.isValidHandPosition()
+      this.canThrow()
+      // && this.isValidHandPosition()
     ) {
       this.mediator.publish('card/create', {
         isPlaceholder: false,
@@ -87,9 +87,9 @@ GameCore.prototype = {
       this.mediator.publish('ui/reset-hand-angle');
     }
   },
-  isValidHandPosition: function () {
-    return this.swipeCoordinates.moveY > this.mediator.getScreenMetrics().height / 2 + this.mediator.getHandMetrics().width;
-  },
+  // isValidHandPosition: function () {
+  //   return this.swipeCoordinates.moveY > this.mediator.getScreenMetrics().height / 2 + this.mediator.getHandMetrics().width;
+  // },
   // Map coordinates from browser's ones to Math ones
   getCorrectCoordinates: function (value) {
     return this.mediator.getScreenMetrics().height - value;
