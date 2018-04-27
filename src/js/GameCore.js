@@ -1,3 +1,5 @@
+import DIOInt from "dio-intint";
+
 export default function GameCore (mediator) {
   this.swipeCoordinates = {
     startX: null,
@@ -48,7 +50,7 @@ GameCore.prototype = {
     return this.releasedSide;
   },
   createWinScreen: function () {
-    window.Ad.create();
+    DIOInt('.dio-intint', 'main');
   },
   getSwipeCoordinates: function () {
     return this.swipeCoordinates;
