@@ -50,7 +50,7 @@ GameCore.prototype = {
     return this.releasedSide;
   },
   createWinScreen: function () {
-    DIOInt('.dio-intint', 'main');
+    DIOInt();
   },
   getSwipeCoordinates: function () {
     return this.swipeCoordinates;

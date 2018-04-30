@@ -107,24 +107,24 @@ html, body {
 }
 .hand.original {
     transform-origin: 0 70%;
-    background: url('../assets/hand.png');
+    background: url('var(--URL)/hand.png');
     background-size: 100%;
 }
 .hand.inverted {
     transform-origin: 100% 70%;
-    background: url('../assets/hand_inverted.png');
+    background: url('var(--URL)/hand_inverted.png');
     background-size: contain;
 }
 .hand.original-empty {
     height: 68px;
     transform-origin: 0 70%;
-    background: url('../assets/hand_empty.png');
+    background: url('var(--URL)/hand_empty.png');
     background-size: 100%;
 }
 .hand.inverted-empty {
     height: 68px;
     transform-origin: 100% 70%;
-    background: url('../assets/hand_empty_inverted.png');
+    background: url('var(--URL)/hand_empty_inverted.png');
     background-size: 100%;
 }
 /*.hand:after {*/
@@ -152,13 +152,13 @@ html, body {
     position: relative;
     height: 100%;
     overflow: hidden;
-    background: url('../assets/back.jpg') no-repeat;
+    background: url('var(--URL)/back.jpg') no-repeat;
     background-size: cover;
 }
 .basket {
     width: 90px;
     height: 117px;
-    background: url('../assets/hat.png') no-repeat;
+    background: url('var(--URL)/hat.png') no-repeat;
     background-size: 100% 100%;
     position: absolute;
     top: 50px;
@@ -172,7 +172,7 @@ html, body {
     height: 62.5px;
     position: absolute;
     animation: rotation 1s linear infinite forwards;
-    background: url('../assets/card.png') no-repeat;
+    background: url('var(--URL)/card.png') no-repeat;
     background-size: contain;
 }
 .card.placeholder {
