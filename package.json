@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:dev": "ENVIRONMENT=DEV webpack --mode development",
-    "build:prod": "ENVIRONMENT=PROD webpack --mode development",
+    "build:prod": "ENVIRONMENT=PROD webpack --mode production",
     "build": "npm run build:dev",
     "watch": "webpack --mode development --watch",
     "clean": "rm -rf dist",

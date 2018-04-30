@@ -1,3 +1,5 @@
+@import '../../node_modules/dio-intint/dist/styles.css';
+
 /* Playable Ad */
 html, body {
     height: 100%;

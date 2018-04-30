@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const conf = require('./conf');
 const webpack = require('webpack');
 const HtmlPlugin = require('html-webpack-plugin');

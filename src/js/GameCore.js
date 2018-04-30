@@ -50,7 +50,19 @@ GameCore.prototype = {
     return this.releasedSide;
   },
   createWinScreen: function () {
-    DIOInt();
+    // images: [
+      // "[[{"type":"banner","width":320,"height":480}]]",
+      // "[[{"type":"banner","width":320,"height":480}]]",
+      // "[[{"type":"banner","width":320,"height":480}]]"
+    // ],
+    // title: "[[{"type":"title"}]]",
+    // rating: [[{"type":"rating"}]]
+    
+    DIOInt({
+      images: [],
+      title: '',
+      rating: ''
+    });
   },
   getSwipeCoordinates: function () {
     return this.swipeCoordinates;
