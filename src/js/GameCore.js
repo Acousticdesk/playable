@@ -16,6 +16,15 @@ export default function GameCore (mediator) {
   this.mediatorEvents(mediator);
 }
 
+// static
+GameCore.getRandomArbitrary = function (min, max) {
+  return Math.random() * (max - min) + min;
+};
+
+GameCore.getRandomInt = function (min, max) {
+  return Math.round(GameCore.getRandomArbitrary(min, max));
+};
+
 GameCore.prototype = {
   mediatorEvents: function (mediator) {
     var setCoordinates = this.setCoordinates.bind(this);
@@ -208,9 +217,6 @@ GameCore.prototype = {
       );
     }
   },
-  getRandomArbitrary: function (min, max) {
-    return Math.random() * (max - min) + min;
-  },
   stopPreview: function () {
     window.clearInterval(this.previewInterval);
     this.mediator.publish('ui/hide-cta');
@@ -245,7 +251,7 @@ GameCore.prototype = {
       }
       
       if (document.hasFocus()) {
-        random = this.getRandomArbitrary(-20, 20);
+        random = GameCore.getRandomArbitrary(-20, 20);
         this.preview(random);
       } else {
         // TODO: Remove redundant link
