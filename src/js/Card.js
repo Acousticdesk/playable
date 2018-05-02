@@ -23,8 +23,10 @@ Card.prototype.onCreateCard = function (options) {
 };
 
 Card.prototype.onRemoveCard = function () {
-  this.el.remove();
-  this.el = null;
+  if (this.el) {
+    this.el.remove();
+    this.el = null;
+  }
 };
 
 Card.prototype.create = function (options) {

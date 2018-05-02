@@ -32,7 +32,6 @@ class Confetti {
     const elBox = this.el.getBoundingClientRect();
   
     if (this.position.x + elBox.width >= this.animationBox.width) {
-      console.log('go back x ');
       this.direction.x = -1;
     } else if (this.position.x <= 0) {
       this.direction.x = 1;
@@ -60,8 +59,7 @@ export default class GameUI {
     this.basket = document.querySelector('.basket');
     this.winScreen = document.querySelector('.win-screen');
     this.cta = document.querySelector('.cta');
-    
-    this.createWinAnimation(30);
+    this.animation = document.querySelector('.win-animation');
   
     this.mediatorEvents(mediator);
   }
@@ -78,18 +76,21 @@ export default class GameUI {
   }
   
   createWinAnimation (confettiCount) {
-    let animation = document.querySelector('.win-animation'),
-      animationBox = animation.getBoundingClientRect(),
-      colors = ['red', 'orange', 'lime', 'blue'],
+    let colors = ['red', 'orange', 'lime', 'blue'],
       sizes = ['big', 'med', 'small'],
       confetti;
+  
+    this.animation.classList.remove('hidden');
+    this.animation.classList.add('appearance');
+  
+    const animationBox = this.animation.getBoundingClientRect();
     
     for (let i = 0; i < confettiCount; i += 1) {
       let size = sizes[GameCore.getRandomInt(0, sizes.length - 1)];
       let color = colors[GameCore.getRandomInt(0, colors.length - 1)];
       confetti = new Confetti(size, color, animationBox);
       
-      animation.appendChild(confetti.el);
+      this.animation.appendChild(confetti.el);
       confetti.animate();
     }
   }
@@ -128,8 +129,17 @@ export default class GameUI {
       }
     };
     
-    this.winScreen.addEventListener('transitionend', onTransitionend);
-    this.winScreen.classList.add('show');
+    this.createWinAnimation(30);
+    window.setTimeout(() => {
+      this.winScreen.addEventListener('transitionend', onTransitionend);
+      this.winScreen.classList.add('show');
+      window.setTimeout(() => {
+        this.animation.classList.remove('appearance');
+        window.setTimeout(() => {
+          this.animation.classList.add('hidden');
+        }, 300);
+      }, 750);
+    }, 2000);
   }
   
   applyHandEmptyClass () {

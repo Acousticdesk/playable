@@ -28,6 +28,9 @@ module.exports = {
     }),
     new MiniCssPlugin({
       filename: "styles.css"
+    }),
+    new webpack.DefinePlugin({
+      DEVELOPMENT: process.env.ENVIRONMENT === 'DEV'
     })
   ]
 };

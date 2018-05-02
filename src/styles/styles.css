@@ -228,15 +228,45 @@ html, body {
 
 .win-animation {
     position: absolute;
-    top: 50%;
+    top: 30%;
     left: 50%;
     transform: translate(-50%);
     color: #fff;
     font-size: 70px;
     text-transform: uppercase;
     z-index: 100;
-    padding: 35px;
+    padding: 55px;
     text-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity .3s;
+}
+
+.win-animation.hidden {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+}
+
+@keyframes win-animation-appearance {
+    0% {
+        transform: translate(-50%) scale(1) rotate(0deg);
+    }
+    50% {
+        transform: translate(-50%) scale(1.5) rotate(15deg);
+    }
+    100% {
+        transform: translate(-50%) scale(1) rotate(0deg);
+    }
+}
+
+.win-animation.appearance {
+    width: auto;
+    height: auto;
+    overflow: auto;
+    visibility: visible;
+    opacity: 1;
+    animation: win-animation-appearance 1s;
 }
 
 .confetti {

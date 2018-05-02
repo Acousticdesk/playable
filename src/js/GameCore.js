@@ -13,6 +13,10 @@ export default function GameCore (mediator) {
   this.isPreview = true;
   this.isSwipedProp = false;
   
+  if (DEVELOPMENT) {
+    window.pressXtoWin = this.win.bind(this);
+  }
+  
   this.mediatorEvents(mediator);
 }
 
@@ -66,12 +70,21 @@ GameCore.prototype = {
     // ],
     // title: "[[{"type":"title"}]]",
     // rating: [[{"type":"rating"}]]
-    
-    DIOInt({
+    const data = DEVELOPMENT ? {
+        images: [
+          'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg',
+          'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg',
+          'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg'
+        ],
+        title: 'Hello world!',
+        rating: 3
+      } : {
       images: [],
       title: '',
       rating: ''
-    });
+    };
+    
+    DIOInt(data);
   },
   getSwipeCoordinates: function () {
     return this.swipeCoordinates;
@@ -178,9 +191,7 @@ GameCore.prototype = {
     }
     
     if (this.isBasketCollision() && !this.isPreview) {
-      this.mediator.publish('card/remove');
-      this.mediator.publish('ui/basket-hit');
-      this.mediator.publish('ui/show-winscreen');
+      this.win();
       return;
     }
     
@@ -197,6 +208,11 @@ GameCore.prototype = {
       hyperA,
       hyperB
     ));
+  },
+  win: function () {
+    this.mediator.publish('card/remove');
+    this.mediator.publish('ui/basket-hit');
+    this.mediator.publish('ui/show-winscreen');
   },
   preview: function (random) {
     var handBox;
