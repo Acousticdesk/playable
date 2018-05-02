@@ -21,8 +21,13 @@ module.exports = {
       filename: 'markup.html',
       inject: false
     }),
+    new HtmlPlugin({
+      template: 'preview.ejs',
+      filename: 'preview.html',
+      inject: false
+    }),
     new MiniCssPlugin({
-      filename: "[name].css"
+      filename: "styles.css"
     })
   ]
 };
