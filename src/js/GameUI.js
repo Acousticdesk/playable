@@ -1,78 +1,78 @@
 import GameCore from './GameCore';
+import Confetti from './Confetti';
+import CallbackStorage from './CallbackStorage';
 
-class Confetti {
-  constructor (size, color, animationBox) {
-    this.direction = {
-      x: GameCore.getRandomInt(-1, 1) || 1,
-      y: GameCore.getRandomInt(-1, 1) || 1
-    };
-    this.moveSpeed = GameCore.getRandomArbitrary(1, 2);
-    this.animationBox = animationBox;
-    this.createEl(size, color);
-    this.setPosition(animationBox);
-    this.updatePosition();
-  }
-  setPosition () {
-    this.position = {
-      x: GameCore.getRandomInt(0, this.animationBox.width) - this.el.clientWidth,
-      y: GameCore.getRandomInt(0, this.animationBox.height) - this.el.clientHeight
-    };
-  }
-  createEl (size, color) {
-    this.el = document.createElement('div');
-    this.el.classList.add('confetti');
-    this.el.classList.add(color);
-    this.el.classList.add(size);
-  }
-  updatePosition () {
-    this.el.style.left = `${this.position.x}px`;
-    this.el.style.top = `${this.position.y}px`;
-  }
-  updateDirection () {
-    const elBox = this.el.getBoundingClientRect();
-  
-    if (this.position.x + elBox.width >= this.animationBox.width) {
-      this.direction.x = -1;
-    } else if (this.position.x <= 0) {
-      this.direction.x = 1;
-    }
-  
-    if (this.position.y + elBox.height >= this.animationBox.height) {
-      this.direction.y = -1;
-    } else if (this.position.y <= 0) {
-      this.direction.y = 1;
-    }
-  }
-  
-  animate () {
-    this.position.x += this.direction.x * this.moveSpeed;
-    this.position.y += this.direction.y * this.moveSpeed;
-    this.updatePosition();
-    this.updateDirection();
-    window.requestAnimationFrame(this.animate.bind(this));
-  }
-}
-
-export default class GameUI {
+export default class GameUI extends CallbackStorage {
   constructor (mediator) {
+    super();
+    
     this.hand = document.querySelector('.hand');
     this.basket = document.querySelector('.basket');
     this.winScreen = document.querySelector('.win-screen');
     this.cta = document.querySelector('.cta');
     this.animation = document.querySelector('.win-animation');
+    this.skipBtn = document.querySelector('.skip-game');
   
-    this.mediatorEvents(mediator);
+    this.saveCallbacks();
+    this.delegateUIEvents();
+    this.mediatorEvents(mediator, 'subscribe');
   }
   
-  mediatorEvents (mediator) {
-    mediator.subscribe('screen/touchmove', this.trackHandPosition.bind(this));
-    mediator.subscribe('ui/reset-assets-classes', this.resetAssetsClasses.bind(this));
-    mediator.subscribe('ui/basket-hit', this.onBasketHit.bind(this));
-    mediator.subscribe('ui/show-winscreen', this.showWinScreen.bind(this));
-    mediator.subscribe('ui/update-hand-position', this.updateHandPosition.bind(this));
-    mediator.subscribe('ui/hide-cta', this.hideCta.bind(this));
-    mediator.subscribe('ui/reset-hand-angle', this.resetHandAnglePosition.bind(this));
-    mediator.subscribe('ui/hand-empty', this.applyHandEmptyClass.bind(this));
+  saveCallbacks () {
+    this.addCallbacks([
+      this.trackHandPosition.bind(this),
+      this.resetAssetsClasses.bind(this),
+      this.onBasketHit.bind(this),
+      this.showWinScreen.bind(this),
+      this.updateHandPosition.bind(this),
+      this.hideCta.bind(this),
+      this.resetHandAnglePosition.bind(this),
+      this.applyHandEmptyClass.bind(this),
+      this.showSkipBtn.bind(this),
+      this.onEventsOff.bind(this)
+    ]);
+  }
+  
+  eraseUI () {
+    const eraseElsArr = [...document.querySelectorAll('[data-erasable]')];
+    
+    eraseElsArr.forEach((el) => el.parentElement.removeChild(el))
+  }
+  
+  delegateUIEvents () {
+    const handler = (e) => {
+      e.preventDefault();
+      this.showWinScreen({
+        skipBravoAnimation: true,
+        immediate: true
+      });
+      e.currentTarget.removeEventListener('click', handler)
+    };
+    
+    this.skipBtn.addEventListener('click', handler);
+  }
+  
+  mediatorEvents (mediator, action) {
+    // TODO: Rename events
+    mediator[action]('screen/touchmove', this.getCallback('trackHandPosition'));
+    mediator[action]('ui/reset-assets-classes', this.getCallback('resetAssetsClasses'));
+    mediator[action]('ui/basket-hit', this.getCallback('onBasketHit'));
+    mediator[action]('ui/show-winscreen', this.getCallback('showWinScreen'));
+    mediator[action]('ui/update-hand-position', this.getCallback('updateHandPosition'));
+    mediator[action]('ui/hide-cta', this.getCallback('hideCta'));
+    mediator[action]('ui/reset-hand-angle', this.getCallback('resetHandAnglePosition'));
+    mediator[action]('ui/hand-empty', this.getCallback('applyHandEmptyClass'));
+    mediator[action]('ui/show-skip', this.getCallback('showSkipBtn'));
+    mediator[action]('all/events-off', this.getCallback('onEventsOff'));
+  }
+  
+  onEventsOff () {
+    this.mediatorEvents(this.mediator, 'unsub');
+  }
+  
+  showSkipBtn () {
+    this.skipBtn.classList.add('visible');
+    this.skipBtn.classList.remove('hidden');
   }
   
   createWinAnimation (confettiCount) {
@@ -121,25 +121,44 @@ export default class GameUI {
     this.hand.style.top = '';
   }
   
-  showWinScreen () {
+  showWinScreen (options) {
+    options = options || {};
+    
     const onTransitionend = (e) => {
       if (e.target === this.winScreen) {
         this.mediator.publish('core/create-winscreen');
+        this.mediator.publish('all/events-off');
         this.winScreen.removeEventListener('transitionend', onTransitionend);
       }
     };
     
-    this.createWinAnimation(30);
-    window.setTimeout(() => {
+    const showScreen = () => {
       this.winScreen.addEventListener('transitionend', onTransitionend);
       this.winScreen.classList.add('show');
+  
+      if (options.skipBravoAnimation) {
+        this.eraseUI();
+        return;
+      }
+  
       window.setTimeout(() => {
         this.animation.classList.remove('appearance');
         window.setTimeout(() => {
           this.animation.classList.add('hidden');
+          this.eraseUI();
         }, 300);
       }, 750);
-    }, 2000);
+    };
+    
+    if (!options.skipBravoAnimation) {
+      this.createWinAnimation(30);
+    }
+    
+    if (options.immediate) {
+      showScreen();
+    } else {
+      window.setTimeout(showScreen, 2000);
+    }
   }
   
   applyHandEmptyClass () {

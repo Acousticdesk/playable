@@ -1,53 +1,74 @@
-export default function Card (mediator) {
-  this.width = 50;
-  this.height = 80;
-  this.speed = 10;
-  this.el = null;
-  
-  this.mediatorEvents(mediator);
-}
+import CallbackStorage from './CallbackStorage';
 
-Card.prototype.mediatorEvents = function (mediator) {
-  mediator.subscribe('card/create', this.onCreateCard.bind(this));
-  mediator.subscribe('card/remove', this.onRemoveCard.bind(this));
-  mediator.subscribe('card/update-position', this.updatePosition.bind(this));
-};
-
-Card.prototype.isOnScreen = function () {
-  return this.el;
-};
-
-Card.prototype.onCreateCard = function (options) {
-  this.create(options);
-  this.mediator.publish('screen/add-card', this.el);
-};
-
-Card.prototype.onRemoveCard = function () {
-  if (this.el) {
-    this.el.remove();
+export default class Card extends CallbackStorage{
+  constructor (mediator) {
+    super();
+    
+    this.width = 50;
+    this.height = 80;
+    this.speed = 10;
     this.el = null;
+    
+    // TODO: repeated
+    this.addCallbacks([
+      this.onCreateCard.bind(this),
+      this.onRemoveCard.bind(this),
+      this.updatePosition.bind(this),
+      this.onEventsOff.bind(this)
+    ]);
+    
+    this.mediatorEvents(mediator, 'subscribe');
   }
-};
-
-Card.prototype.create = function (options) {
-  this.el = document.createElement('div');
-  this.el.style.width = this.width + 'px';
-  this.el.style.height = this.height + 'px';
-  this.el.style.top = options.y + 'px';
-  this.el.style.left = options.x - options.offset + 'px';
-  this.el.classList.add('card');
-  this.el.classList.toggle('placeholder', options.isPlaceholder);
-};
-
-Card.prototype.getSpeed = function () {
-  return this.speed;
-};
-
-Card.prototype.getMetrics = function () {
-  return this.el.getBoundingClientRect();
-};
-
-Card.prototype.updatePosition = function (options) {
-  this.el.style.left = options.left + 'px';
-  this.el.style.top = options.top + 'px';
-};
+  
+  // TODO: repeated
+  mediatorEvents (mediator, action) {
+    mediator[action]('card/create', this.getCallback('onCreateCard'));
+    mediator[action]('card/remove', this.getCallback('onRemoveCard'));
+    mediator[action]('card/update-position', this.getCallback('updatePosition'));
+    mediator[action]('all/events-off', this.getCallback('onEventsOff'));
+  }
+  
+  // TODO: repeated
+  onEventsOff () {
+    this.mediatorEvents(this.mediator, 'unsub');
+  }
+  
+  isOnScreen () {
+    return this.el;
+  }
+  
+  onCreateCard (options) {
+    this.create(options);
+    this.mediator.publish('screen/add-card', this.el);
+  }
+  
+  onRemoveCard () {
+    if (this.el) {
+      this.el.remove();
+      this.el = null;
+    }
+  }
+  
+  create (options) {
+    this.el = document.createElement('div');
+    this.el.style.width = this.width + 'px';
+    this.el.style.height = this.height + 'px';
+    this.el.style.top = options.y + 'px';
+    this.el.style.left = options.x - options.offset + 'px';
+    this.el.classList.add('card');
+    this.el.classList.toggle('placeholder', options.isPlaceholder);
+  }
+  
+  getSpeed () {
+    return this.speed;
+  }
+  
+  getMetrics () {
+    return this.el.getBoundingClientRect();
+  }
+  
+  updatePosition (options) {
+    this.el.style.left = options.left + 'px';
+    this.el.style.top = options.top + 'px';
+  }
+}

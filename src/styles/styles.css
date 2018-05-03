@@ -306,3 +306,37 @@ html, body {
 .confetti.lime {
     background: #d2f42c;
 }
+
+/* TODO: Make hidden class for transition elements */
+.skip-game.hidden {
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.skip-game.visible {
+    width: auto;
+    height: auto;
+    visibility: visible;
+    overflow: auto;
+    opacity: 1;
+}
+
+.skip-game {
+    border-radius: 50%;
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    font-size: 20px;
+    background: #fff;
+    color: #333;
+    padding: 20px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    transition: opacity .3s;
+}
+
+.skip-game:active {
+    box-shadow: none;
+}

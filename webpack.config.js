@@ -5,6 +5,9 @@ const webpack = require('webpack');
 const HtmlPlugin = require('html-webpack-plugin');
 const MiniCssPlugin = require('mini-css-extract-plugin');
 
+// 1) "npm run build" will be failed on the initial first run
+// 2) After changes of index.ejs you need to run "npm build" script 2 times to get preview.html up to date
+
 module.exports = {
   context: path.resolve(__dirname, 'src'),
   entry: './js/index.js',

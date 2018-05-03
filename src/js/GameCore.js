@@ -1,112 +1,148 @@
-import DIOInt from "dio-intint";
+import DIOInt from 'dio-intint';
+import CallbackStorage from './CallbackStorage';
 
-export default function GameCore (mediator) {
-  this.swipeCoordinates = {
-    startX: null,
-    startY: null,
-    releasedX: null,
-    releasedY: null,
-    moveX: null,
-    moveY: null
-  };
+export default class GameCore extends CallbackStorage {
+  constructor(mediator) {
+    super();
+    
+    this.swipeCoordinates = {
+      startX: null,
+      startY: null,
+      releasedX: null,
+      releasedY: null,
+      moveX: null,
+      moveY: null
+    };
+    
+    this.isPreview = true;
+    this.isSwipedProp = false;
+    
+    // Webpack Define Plugin variable
+    if (DEVELOPMENT) {
+      window.pressXtoWin = this.win.bind(this);
+    }
+    
+    // TODO: repetitive
+    this.addCallbacks([
+      this.setCoordinates.bind(this),
+      this.onScreenTouchend.bind(this),
+      this.onScreenTouchstart.bind(this),
+      this.createWinScreen.bind(this),
+      this.calculateAngle.bind(this),
+      this.onScreenTouchmove.bind(this),
+      this.onEventsOff.bind(this)
+    ]);
   
-  this.isPreview = true;
-  this.isSwipedProp = false;
-  
-  if (DEVELOPMENT) {
-    window.pressXtoWin = this.win.bind(this);
+    // TODO: repetitive
+    this.mediatorEvents(mediator, 'subscribe');
   }
   
-  this.mediatorEvents(mediator);
-}
-
-// static
-GameCore.getRandomArbitrary = function (min, max) {
-  return Math.random() * (max - min) + min;
-};
-
-GameCore.getRandomInt = function (min, max) {
-  return Math.round(GameCore.getRandomArbitrary(min, max));
-};
-
-GameCore.prototype = {
-  mediatorEvents: function (mediator) {
-    var setCoordinates = this.setCoordinates.bind(this);
-    
-    mediator.subscribe('screen/touchend', function (coordinates) {
-      setCoordinates(coordinates);
-      this.throwCard();
-    }.bind(this));
-    mediator.subscribe('screen/touchstart', function (coordinates) {
-      setCoordinates(coordinates);
-      this.makePreviewStop();
-    }.bind(this));
-    mediator.subscribe('core/create-winscreen', this.createWinScreen.bind(this));
-    mediator.subscribe('core/calculate-hand-angle', this.calculateAngle.bind(this));
-    mediator.subscribe('screen/touchmove', function (coordinates) {
-      setCoordinates(coordinates);
-      this.updateIsSwiped();
-      this.setReleasedSide(coordinates.moveX);
-    }.bind(this));
-  },
-  setReleasedSide: function (moveX) {
+  static getRandomArbitrary (min, max) {
+    return Math.random() * (max - min) + min;
+  }
+  
+  static getRandomInt (min, max) {
+    return Math.round(GameCore.getRandomArbitrary(min, max));
+  }
+  
+  // TODO: repetitive
+  mediatorEvents (mediator, action) {
+    mediator[action]('screen/touchend', this.getCallback('onScreenTouchend'));
+    mediator[action]('screen/touchstart', this.getCallback('onScreenTouchstart'));
+    mediator[action]('core/create-winscreen', this.getCallback('createWinScreen'));
+    mediator[action]('core/calculate-hand-angle', this.getCallback('calculateAngle'));
+    mediator[action]('screen/touchmove', this.getCallback('onScreenTouchmove'));
+    mediator[action]('all/events-off', this.getCallback('onEventsOff'));
+  }
+  
+  // TODO: repetitive
+  onEventsOff () {
+    this.mediatorEvents(this.mediator, 'unsub')
+  }
+  
+  onScreenTouchmove (coordinates) {
+    this.getCallback('setCoordinates')(coordinates);
+    this.updateIsSwiped();
+    this.setReleasedSide(coordinates.moveX);
+  }
+  
+  onScreenTouchstart (coordinates) {
+    this.getCallback('setCoordinates')(coordinates);
+    this.makePreviewStop();
+    window.setTimeout(() => this.mediator.publish('ui/show-skip'), 2500);
+  }
+  
+  onScreenTouchend (coordinates) {
+    this.getCallback('setCoordinates')(coordinates);
+    this.throwCard();
+  }
+  
+  setReleasedSide (moveX) {
     this.releasedSide = this.getCursorPosition(moveX);
-  },
-  setCoordinates: function (coordinates) {
-    for (var key in coordinates) {
+  }
+  
+  setCoordinates (coordinates) {
+    for (let key in coordinates) {
       if (coordinates.hasOwnProperty(key)) {
         this.swipeCoordinates[key] = coordinates[key];
       }
     }
-  },
-  getReleasedSide: function () {
+  }
+  
+  getReleasedSide () {
     return this.releasedSide;
-  },
-  createWinScreen: function () {
+  }
+  
+  createWinScreen () {
     // images: [
-      // "[[{"type":"banner","width":320,"height":480}]]",
-      // "[[{"type":"banner","width":320,"height":480}]]",
-      // "[[{"type":"banner","width":320,"height":480}]]"
+    // "[[{"type":"banner","width":320,"height":480}]]",
+    // "[[{"type":"banner","width":320,"height":480}]]",
+    // "[[{"type":"banner","width":320,"height":480}]]"
     // ],
     // title: "[[{"type":"title"}]]",
     // rating: [[{"type":"rating"}]]
     const data = DEVELOPMENT ? {
-        images: [
-          'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg',
-          'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg',
-          'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg'
-        ],
-        title: 'Hello world!',
-        rating: 3
-      } : {
+      images: [
+        'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg',
+        'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg',
+        'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg'
+      ],
+      title: 'Hello world!',
+      rating: 3
+    } : {
       images: [],
       title: '',
       rating: ''
     };
-    
+    console.log('should be triggered');
     DIOInt(data);
-  },
-  getSwipeCoordinates: function () {
+  }
+  
+  getSwipeCoordinates () {
     return this.swipeCoordinates;
-  },
-  updateIsSwiped: function () {
+  }
+  
+  updateIsSwiped () {
     this.isSwipedProp =
       this.swipeCoordinates.startX !== this.swipeCoordinates.moveX ||
       this.swipeCoordinates.startY !== this.swipeCoordinates.moveY;
-  },
-  isSwiped: function () {
+  }
+  
+  isSwiped () {
     return this.isSwipedProp;
-  },
-  getCursorPosition: function (releasedX) {
+  }
+  
+  getCursorPosition (releasedX) {
     // TODO: Prevent all 'getScreenMetrics' calls
     return releasedX < this.mediator.getScreenMetrics().width / 2 ? 'left' : 'right';
-  },
-  throwCard: function () {
+  }
+  
+  throwCard () {
     if (
       !this.mediator.isCardOnScreen() &&
       this.isSwiped() &&
       this.canThrow()
-      // && this.isValidHandPosition()
+    // && this.isValidHandPosition()
     ) {
       this.mediator.publish('card/create', {
         isPlaceholder: false,
@@ -122,23 +158,32 @@ GameCore.prototype = {
     } else {
       this.mediator.publish('ui/reset-hand-angle');
     }
-  },
-  // isValidHandPosition: function () {
+  }
+  
+  // isValidHandPosition () {
   //   return this.swipeCoordinates.moveY > this.mediator.getScreenMetrics().height / 2 + this.mediator.getHandMetrics().width;
-  // },
+  // }
+  
   // Map coordinates from browser's ones to Math ones
-  getCorrectCoordinates: function (value) {
+  getCorrectCoordinates (value) {
     return this.mediator.getScreenMetrics().height - value;
-  },
-  canThrow: function () {
-    return this.swipeCoordinates.startX && this.swipeCoordinates.startY;
-  },
+  }
+  
+  canThrow () {
+    const validSwipeDistance = 20;
+    const isSwipeReleased =
+      Math.abs(this.swipeCoordinates.releasedX - this.swipeCoordinates.startX) > validSwipeDistance ||
+      Math.abs(this.swipeCoordinates.releasedY - this.swipeCoordinates.startY) > validSwipeDistance;
+    
+    return this.swipeCoordinates.startX && this.swipeCoordinates.startY && isSwipeReleased;
+  }
+  
   // TODO: Why getting through params, instead of Class props?
-  requestAnimation: function (releasedX, releasedY) {
+  requestAnimation (releasedX, releasedY) {
     this.firstReleasedX = releasedX;
     
-    var hyperB = this.mediator.getScreenMetrics().height + this.mediator.getBasketMetrics().height;
-    var hyperA = hyperB / 1.75;
+    const hyperB = this.mediator.getScreenMetrics().height + this.mediator.getBasketMetrics().height;
+    const hyperA = hyperB / 1.75;
     
     window.requestAnimationFrame(this.updateCardCoords.bind(this,
       this.swipeCoordinates.startX,
@@ -149,14 +194,13 @@ GameCore.prototype = {
       hyperA,
       hyperB
     ));
-  },
-  isBasketCollision: function () {
-    var basketRect = this.mediator.getBasketMetrics();
-    var elRect = this.mediator.getCardMetrics();
-    var basketHoleOnPictureDiff = 20;
-    var basketHoleDiffBottom = basketRect.height - basketHoleOnPictureDiff;
-    var basketHoleDiffTop = basketRect.height / 4;
-    var sideDiff = basketRect.width / 2;
+  }
+  
+  isBasketCollision () {
+    const basketRect = this.mediator.getBasketMetrics();
+    const elRect = this.mediator.getCardMetrics();
+    const basketHoleOnPictureDiff = 20;
+    const sideDiff = basketRect.width / 2;
     
     if (elRect.left < basketRect.left + basketRect.width - sideDiff &&
       elRect.left + elRect.width > basketRect.left + sideDiff &&
@@ -164,8 +208,9 @@ GameCore.prototype = {
       elRect.height + elRect.top > basketRect.top + basketHoleOnPictureDiff) {
       return true;
     }
-  },
-  updateCardCoords: function (x1, y1, x2, y2, hyperA, hyperB) {
+  }
+  
+  updateCardCoords (x1, y1, x2, y2, hyperA, hyperB) {
     let nextX;
     const nextY = y2 + this.mediator.getCardSpeed();
     
@@ -208,14 +253,16 @@ GameCore.prototype = {
       hyperA,
       hyperB
     ));
-  },
-  win: function () {
+  }
+  
+  win () {
     this.mediator.publish('card/remove');
     this.mediator.publish('ui/basket-hit');
     this.mediator.publish('ui/show-winscreen');
-  },
-  preview: function (random) {
-    var handBox;
+  }
+  
+  preview (random) {
+    let handBox;
     
     if (!this.card) {
       handBox = this.mediator.getHandMetrics();
@@ -232,17 +279,19 @@ GameCore.prototype = {
         this.swipeCoordinates.startY
       );
     }
-  },
-  stopPreview: function () {
+  }
+  
+  stopPreview () {
     window.clearInterval(this.previewInterval);
     this.mediator.publish('ui/hide-cta');
     this.isPreview = false;
-  },
+  }
+  
   // TODO: Change formula for hand pre-throw 
-  calculateAngle: function () {
-    var maxHeight = this.mediator.getScreenMetrics().width / 2,
-      deg,
-      cursorY = this.mediator.getScreenMetrics().height - this.swipeCoordinates.moveY;
+  calculateAngle () {
+    const maxHeight = this.mediator.getScreenMetrics().width / 2;
+    const cursorY = this.mediator.getScreenMetrics().height - this.swipeCoordinates.moveY;
+    let deg;
     
     if (cursorY > maxHeight) {
       deg = 90;
@@ -253,13 +302,15 @@ GameCore.prototype = {
     this.mediator.publish('ui/update-hand-position', {
       deg: deg
     });
-  },
-  makePreviewStop: function () {
+  }
+  
+  makePreviewStop () {
     this.shouldStopPreview = true;
-  },
-  startPreview: function () {
-    this.previewInterval = window.setInterval(function () {
-      var random;
+  }
+  
+  startPreview () {
+    this.previewInterval = window.setInterval(() => {
+      let random;
       
       if (this.shouldStopPreview) {
         this.stopPreview();
@@ -276,6 +327,7 @@ GameCore.prototype = {
           this.card = null;
         }
       }
-    }.bind(this), 3000);
+    }, 3000);
   }
 };
+
