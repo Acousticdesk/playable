@@ -1,5 +1,7 @@
 @import '../../node_modules/dio-intint/dist/styles.css';
 
+/* TODO: Refactor styles */
+
 /* Playable Ad */
 html, body {
     height: 100%;

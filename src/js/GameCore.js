@@ -114,7 +114,7 @@ export default class GameCore extends CallbackStorage {
       title: '',
       rating: ''
     };
-    console.log('should be triggered');
+    
     DIOInt(data);
   }
   
