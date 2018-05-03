@@ -6,7 +6,7 @@ module.exports = {
       features: {
         customProperties: {
           variables: {
-            URL: process.env.ENVIRONMENT === 'PROD' ? '[[[CDN_DOMAIN]]]/ctv/asset/playableAd' : '../assets'
+            URL: process.env.ENVIRONMENT === 'PROD' ? '../assets' : '../assets'
           }
         }
       }

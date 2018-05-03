@@ -105,4 +105,6 @@
 import '../styles/styles.css';
 import PlayableAdMediator from './Mediator';
 
+console.log('script runnning');
+
 const playableAd = new PlayableAdMediator();

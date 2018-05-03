@@ -1,31 +1,25 @@
-import CallbackStorage from './CallbackStorage';
-
-export default class Card extends CallbackStorage{
+export default class Card {
   constructor (mediator) {
-    super();
-    
     this.width = 50;
     this.height = 80;
     this.speed = 10;
     this.el = null;
     
     // TODO: repeated
-    this.addCallbacks([
-      this.onCreateCard.bind(this),
-      this.onRemoveCard.bind(this),
-      this.updatePosition.bind(this),
-      this.onEventsOff.bind(this)
-    ]);
+    this.onCreateCard = this.onCreateCard.bind(this);
+    this.onRemoveCard = this.onRemoveCard.bind(this);
+    this.updatePosition = this.updatePosition.bind(this);
+    this.onEventsOff = this.onEventsOff.bind(this);
     
     this.mediatorEvents(mediator, 'subscribe');
   }
   
   // TODO: repeated
   mediatorEvents (mediator, action) {
-    mediator[action]('card/create', this.getCallback('onCreateCard'));
-    mediator[action]('card/remove', this.getCallback('onRemoveCard'));
-    mediator[action]('card/update-position', this.getCallback('updatePosition'));
-    mediator[action]('all/events-off', this.getCallback('onEventsOff'));
+    mediator[action]('card/create', this.onCreateCard);
+    mediator[action]('card/remove', this.onRemoveCard);
+    mediator[action]('card/update-position', this.updatePosition);
+    mediator[action]('all/events-off', this.onEventsOff);
   }
   
   // TODO: repeated

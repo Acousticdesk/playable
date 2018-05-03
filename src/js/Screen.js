@@ -1,18 +1,12 @@
-import CallbackStorage from './CallbackStorage';
-
-export default class Screen extends CallbackStorage {
+export default class Screen  {
   constructor (mediator) {
-    super();
-    
     this.el = document.querySelector('.screen');
     this.closeBtn = document.querySelector('.close-btn');
   
     // TODO: repetitive
-    this.addCallbacks([
-      this.addCard.bind(this),
-      this.onEventsOff.bind(this),
-      this.remove.bind(this)
-    ]);
+    this.addCard = this.addCard.bind(this);
+    this.onEventsOff = this.onEventsOff.bind(this);
+    this.remove = this.remove.bind(this);
   
     // TODO: repetitive
     this.mediatorEvents(mediator, 'subscribe');
@@ -21,7 +15,7 @@ export default class Screen extends CallbackStorage {
   }
   
   closeBtnEvent (action) {
-    this.closeBtn[action + 'EventListener']('click', this.getCallback('remove'));
+    this.closeBtn[action + 'EventListener']('click', this.remove);
   }
   
   // TODO: repetitive
@@ -32,8 +26,8 @@ export default class Screen extends CallbackStorage {
   
   // TODO: repetitive
   mediatorEvents (mediator, action) {
-    mediator[action]('screen/add-card', this.getCallback('addCard'));
-    mediator[action]('all/events-off', this.getCallback('onEventsOff'));
+    mediator[action]('screen/add-card', this.addCard);
+    mediator[action]('all/events-off', this.onEventsOff);
   }
   
   addCard (card) {

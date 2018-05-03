@@ -1,11 +1,8 @@
 import GameCore from './GameCore';
 import Confetti from './Confetti';
-import CallbackStorage from './CallbackStorage';
 
-export default class GameUI extends CallbackStorage {
+export default class GameUI {
   constructor (mediator) {
-    super();
-    
     this.hand = document.querySelector('.hand');
     this.basket = document.querySelector('.basket');
     this.winScreen = document.querySelector('.win-screen');
@@ -13,24 +10,19 @@ export default class GameUI extends CallbackStorage {
     this.animation = document.querySelector('.win-animation');
     this.skipBtn = document.querySelector('.skip-game');
   
-    this.saveCallbacks();
+    this.trackHandPosition = this.trackHandPosition.bind(this);
+    this.resetAssetsClasses = this.resetAssetsClasses.bind(this);
+    this.onBasketHit = this.onBasketHit.bind(this);
+    this.showWinScreen = this.showWinScreen.bind(this);
+    this.updateHandPosition = this.updateHandPosition.bind(this);
+    this.hideCta = this.hideCta.bind(this);
+    this.resetHandAnglePosition = this.resetHandAnglePosition.bind(this);
+    this.applyHandEmptyClass = this.applyHandEmptyClass.bind(this);
+    this.showSkipBtn = this.showSkipBtn.bind(this);
+    this.onEventsOff = this.onEventsOff.bind(this);
+  
     this.delegateUIEvents();
     this.mediatorEvents(mediator, 'subscribe');
-  }
-  
-  saveCallbacks () {
-    this.addCallbacks([
-      this.trackHandPosition.bind(this),
-      this.resetAssetsClasses.bind(this),
-      this.onBasketHit.bind(this),
-      this.showWinScreen.bind(this),
-      this.updateHandPosition.bind(this),
-      this.hideCta.bind(this),
-      this.resetHandAnglePosition.bind(this),
-      this.applyHandEmptyClass.bind(this),
-      this.showSkipBtn.bind(this),
-      this.onEventsOff.bind(this)
-    ]);
   }
   
   eraseUI () {
@@ -54,16 +46,16 @@ export default class GameUI extends CallbackStorage {
   
   mediatorEvents (mediator, action) {
     // TODO: Rename events
-    mediator[action]('screen/touchmove', this.getCallback('trackHandPosition'));
-    mediator[action]('ui/reset-assets-classes', this.getCallback('resetAssetsClasses'));
-    mediator[action]('ui/basket-hit', this.getCallback('onBasketHit'));
-    mediator[action]('ui/show-winscreen', this.getCallback('showWinScreen'));
-    mediator[action]('ui/update-hand-position', this.getCallback('updateHandPosition'));
-    mediator[action]('ui/hide-cta', this.getCallback('hideCta'));
-    mediator[action]('ui/reset-hand-angle', this.getCallback('resetHandAnglePosition'));
-    mediator[action]('ui/hand-empty', this.getCallback('applyHandEmptyClass'));
-    mediator[action]('ui/show-skip', this.getCallback('showSkipBtn'));
-    mediator[action]('all/events-off', this.getCallback('onEventsOff'));
+    mediator[action]('screen/touchmove', this.trackHandPosition);
+    mediator[action]('ui/reset-assets-classes', this.resetAssetsClasses);
+    mediator[action]('ui/basket-hit', this.onBasketHit);
+    mediator[action]('ui/show-winscreen', this.showWinScreen);
+    mediator[action]('ui/update-hand-position', this.updateHandPosition);
+    mediator[action]('ui/hide-cta', this.hideCta);
+    mediator[action]('ui/reset-hand-angle', this.resetHandAnglePosition);
+    mediator[action]('ui/hand-empty', this.applyHandEmptyClass);
+    mediator[action]('ui/show-skip', this.showSkipBtn);
+    mediator[action]('all/events-off', this.onEventsOff);
   }
   
   onEventsOff () {

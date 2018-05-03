@@ -1,10 +1,7 @@
 import DIOInt from 'dio-intint';
-import CallbackStorage from './CallbackStorage';
 
-export default class GameCore extends CallbackStorage {
+export default class GameCore {
   constructor(mediator) {
-    super();
-    
     this.swipeCoordinates = {
       startX: null,
       startY: null,
@@ -22,16 +19,13 @@ export default class GameCore extends CallbackStorage {
       window.pressXtoWin = this.win.bind(this);
     }
     
-    // TODO: repetitive
-    this.addCallbacks([
-      this.setCoordinates.bind(this),
-      this.onScreenTouchend.bind(this),
-      this.onScreenTouchstart.bind(this),
-      this.createWinScreen.bind(this),
-      this.calculateAngle.bind(this),
-      this.onScreenTouchmove.bind(this),
-      this.onEventsOff.bind(this)
-    ]);
+    this.setCoordinates = this.setCoordinates.bind(this);
+    this.onScreenTouchend = this.onScreenTouchend.bind(this);
+    this.onScreenTouchstart = this.onScreenTouchstart.bind(this);
+    this.createWinScreen = this.createWinScreen.bind(this);
+    this.calculateAngle = this.calculateAngle.bind(this);
+    this.onScreenTouchmove = this.onScreenTouchmove.bind(this);
+    this.onEventsOff = this.onEventsOff.bind(this);
   
     // TODO: repetitive
     this.mediatorEvents(mediator, 'subscribe');
@@ -47,12 +41,12 @@ export default class GameCore extends CallbackStorage {
   
   // TODO: repetitive
   mediatorEvents (mediator, action) {
-    mediator[action]('screen/touchend', this.getCallback('onScreenTouchend'));
-    mediator[action]('screen/touchstart', this.getCallback('onScreenTouchstart'));
-    mediator[action]('core/create-winscreen', this.getCallback('createWinScreen'));
-    mediator[action]('core/calculate-hand-angle', this.getCallback('calculateAngle'));
-    mediator[action]('screen/touchmove', this.getCallback('onScreenTouchmove'));
-    mediator[action]('all/events-off', this.getCallback('onEventsOff'));
+    mediator[action]('screen/touchend', this.onScreenTouchend);
+    mediator[action]('screen/touchstart', this.onScreenTouchstart);
+    mediator[action]('core/create-winscreen', this.createWinScreen);
+    mediator[action]('core/calculate-hand-angle', this.calculateAngle);
+    mediator[action]('screen/touchmove', this.onScreenTouchmove);
+    mediator[action]('all/events-off', this.onEventsOff);
   }
   
   // TODO: repetitive
@@ -61,19 +55,19 @@ export default class GameCore extends CallbackStorage {
   }
   
   onScreenTouchmove (coordinates) {
-    this.getCallback('setCoordinates')(coordinates);
+    this.setCoordinates(coordinates);
     this.updateIsSwiped();
     this.setReleasedSide(coordinates.moveX);
   }
   
   onScreenTouchstart (coordinates) {
-    this.getCallback('setCoordinates')(coordinates);
+    this.setCoordinates(coordinates);
     this.makePreviewStop();
     window.setTimeout(() => this.mediator.publish('ui/show-skip'), 2500);
   }
   
   onScreenTouchend (coordinates) {
-    this.getCallback('setCoordinates')(coordinates);
+    this.setCoordinates(coordinates);
     this.throwCard();
   }
   
@@ -100,7 +94,7 @@ export default class GameCore extends CallbackStorage {
     // "[[{"type":"banner","width":320,"height":480}]]"
     // ],
     // title: "[[{"type":"title"}]]",
-    // rating: [[{"type":"rating"}]]
+    // rating: "[[{"type":"rating"}]]"
     const data = DEVELOPMENT ? {
       images: [
         'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg',
