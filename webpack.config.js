@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const conf = require('./conf');
+const conf = require('./webpackConf');
 const webpack = require('webpack');
 const HtmlPlugin = require('html-webpack-plugin');
 const MiniCssPlugin = require('mini-css-extract-plugin');
