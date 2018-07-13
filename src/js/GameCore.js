@@ -2,32 +2,17 @@ import DIOInt from 'dio-intint';
 
 export default class GameCore {
   constructor(mediator) {
-    this.swipeCoordinates = {
-      startX: null,
-      startY: null,
-      releasedX: null,
-      releasedY: null,
-      moveX: null,
-      moveY: null
-    };
-    
-    this.isPreview = true;
-    this.isSwipedProp = false;
-    
     // Webpack Define Plugin variable
     if (DEVELOPMENT) {
       window.pressXtoWin = this.win.bind(this);
     }
     
-    this.setCoordinates = this.setCoordinates.bind(this);
-    this.onScreenTouchend = this.onScreenTouchend.bind(this);
-    this.onScreenTouchstart = this.onScreenTouchstart.bind(this);
     this.createWinScreen = this.createWinScreen.bind(this);
     this.calculateAngle = this.calculateAngle.bind(this);
-    this.onScreenTouchmove = this.onScreenTouchmove.bind(this);
     this.onEventsOff = this.onEventsOff.bind(this);
+    this.start = this.start.bind(this);
+    this.win = this.win.bind(this);
   
-    // TODO: repetitive
     this.mediatorEvents(mediator, 'subscribe');
   }
   
@@ -39,55 +24,33 @@ export default class GameCore {
     return Math.round(GameCore.getRandomArbitrary(min, max));
   }
   
-  // TODO: repetitive
-  mediatorEvents (mediator, action) {
-    mediator[action]('screen/touchend', this.onScreenTouchend);
-    mediator[action]('screen/touchstart', this.onScreenTouchstart);
-    mediator[action]('core/create-winscreen', this.createWinScreen);
-    mediator[action]('core/calculate-hand-angle', this.calculateAngle);
-    mediator[action]('screen/touchmove', this.onScreenTouchmove);
-    mediator[action]('all/events-off', this.onEventsOff);
+  static getNextXHyperbola(aParam, bParam, x1, y2) {
+		return -(
+		  Math.sqrt( Math.pow(aParam, 2) * (1 - Math.pow(y2, 2) /
+      Math.pow(bParam, 2)) )
+    ) +  aParam + x1
   }
   
-  // TODO: repetitive
-  onEventsOff () {
+  static getNextXHyperbolaMirrored(aParam, bParam, x1, y2) {
+    return Math.sqrt(
+      Math.pow(aParam, 2) * (1 - Math.pow(y2, 2) /
+      Math.pow(bParam, 2))
+    ) + x1 - aParam;
+  }
+  
+  mediatorEvents (mediator, action) {
+    mediator[action]('core/create-winscreen', this.createWinScreen);
+    mediator[action]('core/calculate-hand-angle', this.calculateAngle);
+    mediator[action]('core/win', this.win);
+    mediator[action]('all/events-off', this.onEventsOff);
+    mediator[action]('core/start', this.start);
+  }
+  
+  onEventsOff() {
     this.mediatorEvents(this.mediator, 'unsub')
   }
   
-  onScreenTouchmove (coordinates) {
-    this.setCoordinates(coordinates);
-    this.updateIsSwiped();
-    this.setReleasedSide(coordinates.moveX);
-  }
-  
-  onScreenTouchstart (coordinates) {
-    this.setCoordinates(coordinates);
-    this.makePreviewStop();
-    window.setTimeout(() => this.mediator.publish('ui/show-skip'), 2500);
-  }
-  
-  onScreenTouchend (coordinates) {
-    this.setCoordinates(coordinates);
-    this.throwCard();
-  }
-  
-  setReleasedSide (moveX) {
-    this.releasedSide = this.getCursorPosition(moveX);
-  }
-  
-  setCoordinates (coordinates) {
-    for (let key in coordinates) {
-      if (coordinates.hasOwnProperty(key)) {
-        this.swipeCoordinates[key] = coordinates[key];
-      }
-    }
-  }
-  
-  getReleasedSide () {
-    return this.releasedSide;
-  }
-  
-  createWinScreen () {
+  createWinScreen() {
     // images: [
     // "[[{"type":"banner","width":320,"height":480}]]",
     // "[[{"type":"banner","width":320,"height":480}]]",
@@ -112,179 +75,21 @@ export default class GameCore {
     DIOInt(data);
   }
   
-  getSwipeCoordinates () {
-    return this.swipeCoordinates;
-  }
-  
-  updateIsSwiped () {
-    this.isSwipedProp =
-      this.swipeCoordinates.startX !== this.swipeCoordinates.moveX ||
-      this.swipeCoordinates.startY !== this.swipeCoordinates.moveY;
-  }
-  
-  isSwiped () {
-    return this.isSwipedProp;
-  }
-  
-  getCursorPosition (releasedX) {
-    // TODO: Prevent all 'getScreenMetrics' calls
-    return releasedX < this.mediator.getScreenMetrics().width / 2 ? 'left' : 'right';
-  }
-  
-  throwCard () {
-    if (
-      !this.mediator.isCardOnScreen() &&
-      this.isSwiped() &&
-      this.canThrow()
-    // && this.isValidHandPosition()
-    ) {
-      this.mediator.publish('card/create', {
-        isPlaceholder: false,
-        x: this.swipeCoordinates.startX,
-        y: this.swipeCoordinates.startY,
-        offset: this.mediator.getHandMetrics().width / 2
-      });
-      this.requestAnimation(
-        this.swipeCoordinates.releasedX - this.mediator.getBasketMetrics().width / 2,
-        this.swipeCoordinates.releasedY
-      );
-      this.mediator.publish('ui/hand-empty');
-    } else {
-      this.mediator.publish('ui/reset-hand-angle');
-    }
-  }
-  
-  // isValidHandPosition () {
-  //   return this.swipeCoordinates.moveY > this.mediator.getScreenMetrics().height / 2 + this.mediator.getHandMetrics().width;
-  // }
-  
   // Map coordinates from browser's ones to Math ones
-  getCorrectCoordinates (value) {
-    return this.mediator.getScreenMetrics().height - value;
+  static mathToBrowserCoordinates (mediator, value) {
+    return mediator.getScreenMetrics().height - value;
   }
   
-  canThrow () {
-    const validSwipeDistance = 20;
-    const isSwipeReleased =
-      Math.abs(this.swipeCoordinates.releasedX - this.swipeCoordinates.startX) > validSwipeDistance ||
-      Math.abs(this.swipeCoordinates.releasedY - this.swipeCoordinates.startY) > validSwipeDistance;
-    
-    return this.swipeCoordinates.startX && this.swipeCoordinates.startY && isSwipeReleased;
-  }
-  
-  // TODO: Why getting through params, instead of Class props?
-  requestAnimation (releasedX, releasedY) {
-    this.firstReleasedX = releasedX;
-    
-    const hyperB = this.mediator.getScreenMetrics().height + this.mediator.getBasketMetrics().height;
-    const hyperA = hyperB / 1.75;
-    
-    window.requestAnimationFrame(this.updateCardCoords.bind(this,
-      this.swipeCoordinates.startX,
-      this.getCorrectCoordinates(this.swipeCoordinates.startY),
-      releasedX,
-      this.getCorrectCoordinates(releasedY),
-      // parabolaParam
-      hyperA,
-      hyperB
-    ));
-  }
-  
-  isBasketCollision () {
-    const basketRect = this.mediator.getBasketMetrics();
-    const elRect = this.mediator.getCardMetrics();
-    const basketHoleOnPictureDiff = 20;
-    const sideDiff = basketRect.width / 2;
-    
-    if (elRect.left < basketRect.left + basketRect.width - sideDiff &&
-      elRect.left + elRect.width > basketRect.left + sideDiff &&
-      elRect.top < basketRect.top + basketHoleOnPictureDiff &&
-      elRect.height + elRect.top > basketRect.top + basketHoleOnPictureDiff) {
-      return true;
-    }
-  }
-  
-  updateCardCoords (x1, y1, x2, y2, hyperA, hyperB) {
-    let nextX;
-    const nextY = y2 + this.mediator.getCardSpeed();
-    
-    if (this.releasedSide === 'left' || !this.releasedSide) {
-      nextX = -(Math.sqrt( Math.pow(hyperA, 2) * (1 - Math.pow(nextY, 2) / Math.pow(hyperB, 2)) )) +  hyperA + this.firstReleasedX;
-    } else if (this.releasedSide === 'right') {
-      nextX = Math.sqrt( Math.pow(hyperA, 2) * (1 - Math.pow(nextY, 2) / Math.pow(hyperB, 2)) ) + this.firstReleasedX - hyperA;
-    }
-    const cardLeft = window.parseInt(nextX);
-    const cardTop = this.mediator.getScreenMetrics().height - window.parseInt(nextY);
-    
-    if (
-      cardLeft > this.mediator.getScreenMetrics().width || cardTop > this.mediator.getScreenMetrics().height ||
-      cardLeft < 0 || cardTop < 0
-    ) {
-      this.mediator.publish('card/remove');
-      this.setCoordinates({
-        startX: null,
-        startY: null
-      });
-      this.mediator.publish('ui/reset-assets-classes');
-      return;
-    }
-    
-    if (this.isBasketCollision() && !this.isPreview) {
-      this.win();
-      return;
-    }
-    
-    this.mediator.publish('card/update-position', {
-      left: cardLeft,
-      top: cardTop
-    });
-    
-    window.requestAnimationFrame(this.updateCardCoords.bind(this,
-      x2,
-      y2,
-      nextX,
-      nextY,
-      hyperA,
-      hyperB
-    ));
-  }
-  
-  win () {
+  win() {
     this.mediator.publish('card/remove');
     this.mediator.publish('ui/basket-hit');
     this.mediator.publish('ui/show-winscreen');
   }
   
-  preview (random) {
-    let handBox;
-    
-    if (!this.card) {
-      handBox = this.mediator.getHandMetrics();
-      this.swipeCoordinates.startX = handBox.left + handBox.width / 2 + random;
-      this.swipeCoordinates.startY = handBox.top;
-      this.mediator.publish('card/create', {
-        isPlaceholder: true,
-        x: this.swipeCoordinates.startX,
-        y: this.swipeCoordinates.startY,
-        offset: handBox.width / 2
-      });
-      this.requestAnimation(
-        this.swipeCoordinates.startX,
-        this.swipeCoordinates.startY
-      );
-    }
-  }
-  
-  stopPreview () {
-    window.clearInterval(this.previewInterval);
-    this.mediator.publish('ui/hide-cta');
-    this.isPreview = false;
-  }
-  
-  // TODO: Change formula for hand pre-throw 
-  calculateAngle () {
+  calculateAngle() {
+    const {moveY} = this.mediator.getFingerCoordinates();
     const maxHeight = this.mediator.getScreenMetrics().width / 2;
-    const cursorY = this.mediator.getScreenMetrics().height - this.swipeCoordinates.moveY;
+    const cursorY = this.mediator.getScreenMetrics().height - moveY;
     let deg;
     
     if (cursorY > maxHeight) {
@@ -298,30 +103,29 @@ export default class GameCore {
     });
   }
   
-  makePreviewStop () {
-    this.shouldStopPreview = true;
-  }
-  
-  startPreview () {
-    this.previewInterval = window.setInterval(() => {
-      let random;
-      
-      if (this.shouldStopPreview) {
-        this.stopPreview();
-        return;
-      }
-      
-      if (document.hasFocus()) {
-        random = GameCore.getRandomArbitrary(-20, 20);
-        this.preview(random);
-      } else {
-        // TODO: Remove redundant link
-        if (this.card) {
-          this.card.remove();
-          this.card = null;
-        }
-      }
-    }, 3000);
+  start() {
+		const random = GameCore.getRandomArbitrary(-20, 20);
+		const handBox = this.mediator.getHandMetrics();
+		const updateFingerCoordinates = {
+		  startX: handBox.left + handBox.width / 2 + random,
+			startY: handBox.top
+		};
+
+		// this.fingerCoordinates.startX = handBox.left + handBox.width / 2 + random;
+		// this.fingerCoordinates.startY = handBox.top;
+    
+    this.mediator.publish('finger/update-coordinates', updateFingerCoordinates);
+    
+		this.mediator.publish('card/create', {
+			isPlaceholder: true,
+			x: updateFingerCoordinates.startX,
+			y: updateFingerCoordinates.startY,
+			offset: handBox.width / 2
+		});
+		this.mediator.publish('card/request-animation',
+			updateFingerCoordinates.startX,
+			updateFingerCoordinates.startY
+		);
   }
 };
 

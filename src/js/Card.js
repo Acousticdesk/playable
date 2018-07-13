@@ -1,3 +1,5 @@
+import GameCore from './GameCore';
+
 export default class Card {
   constructor (mediator) {
     this.width = 50;
@@ -5,24 +7,23 @@ export default class Card {
     this.speed = 10;
     this.el = null;
     
-    // TODO: repeated
-    this.onCreateCard = this.onCreateCard.bind(this);
-    this.onRemoveCard = this.onRemoveCard.bind(this);
-    this.updatePosition = this.updatePosition.bind(this);
+    this.create = this.create.bind(this);
+    this.remove = this.remove.bind(this);
     this.onEventsOff = this.onEventsOff.bind(this);
+    this.throw = this.throw.bind(this);
+    this.updateCoordinates = this.updateCoordinates.bind(this);
+    this.requestAnimation = this.requestAnimation.bind(this);
     
     this.mediatorEvents(mediator, 'subscribe');
   }
   
-  // TODO: repeated
   mediatorEvents (mediator, action) {
-    mediator[action]('card/create', this.onCreateCard);
-    mediator[action]('card/remove', this.onRemoveCard);
-    mediator[action]('card/update-position', this.updatePosition);
+    mediator[action]('card/create', this.create);
+    mediator[action]('card/remove', this.remove);
+    mediator[action]('card/requestAnimation', this.requestAnimation);
     mediator[action]('all/events-off', this.onEventsOff);
   }
   
-  // TODO: repeated
   onEventsOff () {
     this.mediatorEvents(this.mediator, 'unsub');
   }
@@ -31,19 +32,20 @@ export default class Card {
     return this.el;
   }
   
-  onCreateCard (options) {
-    this.create(options);
+  create (options) {
+    this.createView(options);
     this.mediator.publish('screen/add-card', this.el);
+    this.mediator.publish('screen/touchend');
   }
   
-  onRemoveCard () {
+  remove () {
     if (this.el) {
       this.el.remove();
       this.el = null;
     }
   }
   
-  create (options) {
+  createView (options) {
     this.el = document.createElement('div');
     this.el.style.width = this.width + 'px';
     this.el.style.height = this.height + 'px';
@@ -51,10 +53,6 @@ export default class Card {
     this.el.style.left = options.x - options.offset + 'px';
     this.el.classList.add('card');
     this.el.classList.toggle('placeholder', options.isPlaceholder);
-  }
-  
-  getSpeed () {
-    return this.speed;
   }
   
   getMetrics () {
@@ -65,4 +63,94 @@ export default class Card {
     this.el.style.left = options.left + 'px';
     this.el.style.top = options.top + 'px';
   }
+  
+  canBeThrown() {
+		return !this.isOnScreen() && this.mediator.getIsSwiped() && this.mediator.isValidSwipe();
+  }
+  
+  throw() {
+		if (this.canBeThrown()) {
+			const { startX, startY, releasedX, releasedY } = this.mediator.getFingerCoordinates();
+
+			this.mediator.publish('finger/update-first-released');
+
+			this.create({
+				isPlaceholder: false,
+				x: startX,
+				y: startY,
+				offset: this.mediator.getHandMetrics().width / 2
+			});
+			this.requestAnimation(
+				releasedX - this.mediator.getBasketMetrics().width / 2,
+				releasedY
+			);
+			this.mediator.publish('ui/hand-empty');
+		} else {
+			this.mediator.publish('ui/reset-hand-angle');
+		}
+  }
+
+	requestAnimation (releasedX, releasedY) {
+		const hyperB = this.mediator.getScreenMetrics().height + this.mediator.getBasketMetrics().height;
+		const hyperA = hyperB / 1.75;
+		const { startX, startY } = this.mediator.getFingerCoordinates();
+
+		window.requestAnimationFrame(() => {
+			this.updateCoordinates(
+				startX,
+				GameCore.mathToBrowserCoordinates(this.mediator, startY),
+				releasedX,
+				GameCore.mathToBrowserCoordinates(this.mediator, releasedY),
+				// parabolaParam
+				hyperA,
+				hyperB
+			);
+		});
+	}
+
+	updateCoordinates (x1, y1, x2, y2, hyperA, hyperB) {
+		let formula;
+		const nextY = y2 + this.speed;
+		const fingerPosition = this.mediator.getFingerPositionOnScreen();
+		const {releasedX} = this.mediator.getFingerCoordinates();
+
+		if (fingerPosition === 'left' || !fingerPosition) {
+			formula = GameCore.getNextXHyperbola;
+		} else if (fingerPosition === 'right') {
+			formula = GameCore.getNextXHyperbolaMirrored;
+		}
+
+		const nextX = formula(hyperA, hyperB, releasedX, nextY);
+		const cardLeft = window.parseInt(nextX);
+		const cardTop = this.mediator.getScreenMetrics().height - window.parseInt(nextY);
+
+		if (
+			cardLeft > this.mediator.getScreenMetrics().width || cardTop > this.mediator.getScreenMetrics().height ||
+			cardLeft < 0 || cardTop < 0
+		) {
+			const resetFingerCoordinates = {
+				startX: null,
+				startY: null
+			};
+
+			this.remove();
+			this.mediator.publish('finger/update-coordinates', resetFingerCoordinates);
+			this.mediator.publish('ui/reset-assets-classes');
+			return;
+		}
+
+		if (this.mediator.isBasketCollision() && this.mediator.getIsPreviewStopped()) {
+			this.mediator.publish('core/win');
+			return;
+		}
+
+		const newPosition = {
+			left: cardLeft,
+			top: cardTop
+		};
+
+		this.updatePosition(newPosition);
+
+		window.requestAnimationFrame(() => this.updateCoordinates(x2, y2, nextX, nextY, hyperA, hyperB));
+	}
 }

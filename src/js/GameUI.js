@@ -20,6 +20,7 @@ export default class GameUI {
     this.applyHandEmptyClass = this.applyHandEmptyClass.bind(this);
     this.showSkipBtn = this.showSkipBtn.bind(this);
     this.onEventsOff = this.onEventsOff.bind(this);
+    this.onScreenTouchstart = this.onScreenTouchstart.bind(this);
   
     this.delegateUIEvents();
     this.mediatorEvents(mediator, 'subscribe');
@@ -47,6 +48,7 @@ export default class GameUI {
   mediatorEvents (mediator, action) {
     // TODO: Rename events
     mediator[action]('screen/touchmove', this.trackHandPosition);
+    mediator[action]('screen/touchstart', this.onScreenTouchstart);
     mediator[action]('ui/reset-assets-classes', this.resetAssetsClasses);
     mediator[action]('ui/basket-hit', this.onBasketHit);
     mediator[action]('ui/show-winscreen', this.showWinScreen);
@@ -54,7 +56,6 @@ export default class GameUI {
     mediator[action]('ui/hide-cta', this.hideCta);
     mediator[action]('ui/reset-hand-angle', this.resetHandAnglePosition);
     mediator[action]('ui/hand-empty', this.applyHandEmptyClass);
-    mediator[action]('ui/show-skip', this.showSkipBtn);
     mediator[action]('all/events-off', this.onEventsOff);
   }
   
@@ -168,7 +169,7 @@ export default class GameUI {
   }
   
   moveHand () {
-    const swipeCoordinates = this.mediator.getSwipeCoordinates();
+    const swipeCoordinates = this.mediator.getFingerCoordinates();
     const cursorX = swipeCoordinates.moveX;
     const cursorY = swipeCoordinates.moveY;
     
@@ -203,4 +204,8 @@ export default class GameUI {
     this.hand.style.transform =
       'rotate(' + (releasedSide === 'right' ? options.deg : -options.deg) + 'deg)';
   }
+
+	onScreenTouchstart() {
+		window.setTimeout(() => this.showSkipBtn(), 2500);
+	}
 }

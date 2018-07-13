@@ -6,9 +6,11 @@ import Screen from './Screen';
 import Card from './Card';
 import GameCore from './GameCore';
 import GameUI from './GameUI';
+import Preview from './Preview';
+import Finger from './Finger';
 
 // Mediator
-// TODO: Is not compatible with SHIT Internet explorer
+// TODO: Is not compatible with Internet explorer
 // var mediator = Object.assign({
 //   create: function (screen) {
 //     this.screen = new Screen(screen);
@@ -20,28 +22,34 @@ import GameUI from './GameUI';
 //    
 //     this.game.start();
 //   },
-//   getScreenMetrics: function () {
+//   getScreenMetrics: function() {
 //     return this.screen.el.getBoundingClientRect();
 //   }
 // }, pubSub);
 
 export default class PlayableAdMediator extends PubSub {
-  constructor () {
+  constructor() {
     super();
   
     this.screen = new Screen(this);
     this.card = new Card(this);
     this.gameCore = new GameCore(this);
     this.gameUI = new GameUI(this);
+    this.preview = new Preview(this);
+    this.finger = new Finger(this);
+    this.basket = new Basket(this);
   
     this.register(
       this.screen,
       this.card,
       this.gameCore,
-      this.gameUI
+      this.gameUI,
+      this.preview,
+      this.finger,
+      this.basket
     );
   
-    this.gameCore.startPreview();
+    this.preview.start();
   }
   
   register (...queue) {
@@ -50,39 +58,47 @@ export default class PlayableAdMediator extends PubSub {
     });
   }
   
-  getScreenMetrics () {
-    return this.screen.el.getBoundingClientRect();
+  getScreenMetrics() {
+    return this.screen.getMetrics();
   }
   
-  isCardOnScreen () {
-    return this.card.isOnScreen();
+  getFingerCoordinates() {
+    return this.finger.getCoordinates();
   }
   
-  getSwipeCoordinates () {
-    return this.gameCore.getSwipeCoordinates();
-  }
-  
-  getBasketMetrics () {
+  getBasketMetrics() {
     return this.gameUI.getBasketMetrics();
   }
   
-  getHandMetrics () {
+  getHandMetrics() {
     return this.gameUI.getHandMetrics();
   }
   
-  getCardSpeed () {
-    return this.card.getSpeed();
-  }
-  
-  getCardMetrics () {
+  getCardMetrics() {
     return this.card.getMetrics();
   }
   
-  // isValidHandPosition () {
-  //   return this.gameCore.isValidHandPosition();
-  // }
+  getIsPreviewStopped() {
+    return this.preview.getIsPreviewStopped();
+  }
   
-  getReleasedSide () {
+  getIsSwiped() {
+    return this.finger.getIsSwiped();
+  }
+  
+  isValidSwipe() {
+    return this.finger.isValidSwipe();
+  }
+  
+  getFingerPositionOnScreen() {
+    return this.screen.getFingerPosition();
+  }
+  
+  isBasketCollision() {
+    return this.basket.isCollision();
+  }
+  
+  getReleasedSide() {
     return this.gameCore.getReleasedSide();
   }
 }
