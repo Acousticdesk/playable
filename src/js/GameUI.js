@@ -155,14 +155,14 @@ export default class GameUI {
   }
   
   applyHandEmptyClass () {
-    const releasedSide = this.mediator.getReleasedSide();
+    const releasedSide = this.mediator.getFingerPositionOnScreen();
     // TODO: Make it cross-browser
     this.hand.classList.toggle('original-empty', releasedSide === 'left');
     this.hand.classList.toggle('inverted-empty', releasedSide === 'right');
   }
   
   applyHandPositionClass () {
-    const releasedSide = this.mediator.getReleasedSide();
+    const releasedSide = this.mediator.getFingerPositionOnScreen();
     // TODO: Make it cross-browser
     this.hand.classList.toggle('original', releasedSide === 'left');
     this.hand.classList.toggle('inverted', releasedSide === 'right');
@@ -186,7 +186,7 @@ export default class GameUI {
   }
   
   trackHandPosition () {
-    const releasedSide = this.mediator.getReleasedSide();
+    const releasedSide = this.mediator.getFingerPositionOnScreen();
     
     // if ( !this.mediator.isValidHandPosition() ) {
     //   return;
@@ -198,7 +198,7 @@ export default class GameUI {
   }
   
   updateHandPosition (options) {
-    const releasedSide = this.mediator.getReleasedSide();
+    const releasedSide = this.mediator.getFingerPositionOnScreen();
     
     this.hand.classList.remove('waiting');
     this.hand.style.transform =

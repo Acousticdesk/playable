@@ -110,22 +110,18 @@ export default class GameCore {
 		  startX: handBox.left + handBox.width / 2 + random,
 			startY: handBox.top
 		};
-
-		// this.fingerCoordinates.startX = handBox.left + handBox.width / 2 + random;
-		// this.fingerCoordinates.startY = handBox.top;
     
     this.mediator.publish('finger/update-coordinates', updateFingerCoordinates);
-    
 		this.mediator.publish('card/create', {
 			isPlaceholder: true,
 			x: updateFingerCoordinates.startX,
 			y: updateFingerCoordinates.startY,
 			offset: handBox.width / 2
 		});
-		this.mediator.publish('card/request-animation',
-			updateFingerCoordinates.startX,
-			updateFingerCoordinates.startY
-		);
+		this.mediator.publish('card/request-animation', {
+				releasedX: updateFingerCoordinates.startX,
+			  releasedY: updateFingerCoordinates.startY
+    });
   }
 };
 

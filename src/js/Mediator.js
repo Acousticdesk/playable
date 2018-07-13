@@ -8,6 +8,7 @@ import GameCore from './GameCore';
 import GameUI from './GameUI';
 import Preview from './Preview';
 import Finger from './Finger';
+import Basket from './Basket';
 
 // Mediator
 // TODO: Is not compatible with Internet explorer
@@ -96,9 +97,5 @@ export default class PlayableAdMediator extends PubSub {
   
   isBasketCollision() {
     return this.basket.isCollision();
-  }
-  
-  getReleasedSide() {
-    return this.gameCore.getReleasedSide();
   }
 }
