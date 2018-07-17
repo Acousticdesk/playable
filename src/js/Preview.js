@@ -2,7 +2,6 @@ export default class Preview {
 	constructor(mediator) {
 		this.interval = null;
 		this.isPreviewStopped = false;
-		// TODO:
 		this.setInterval = this.setInterval.bind(this);
 		this.stopPreview = this.stopPreview.bind(this);
 		this.mediatorEvents(mediator, 'subscribe');

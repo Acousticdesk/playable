@@ -1,10 +1,10 @@
 import GameCore from './GameCore';
 import Confetti from './Confetti';
+import DIOInt from 'dio-intint';
 
 export default class GameUI {
   constructor (mediator) {
     this.hand = document.querySelector('.hand');
-    this.basket = document.querySelector('.basket');
     this.winScreen = document.querySelector('.win-screen');
     this.cta = document.querySelector('.cta');
     this.animation = document.querySelector('.win-animation');
@@ -12,7 +12,6 @@ export default class GameUI {
   
     this.trackHandPosition = this.trackHandPosition.bind(this);
     this.resetAssetsClasses = this.resetAssetsClasses.bind(this);
-    this.onBasketHit = this.onBasketHit.bind(this);
     this.showWinScreen = this.showWinScreen.bind(this);
     this.updateHandPosition = this.updateHandPosition.bind(this);
     this.hideCta = this.hideCta.bind(this);
@@ -21,6 +20,7 @@ export default class GameUI {
     this.showSkipBtn = this.showSkipBtn.bind(this);
     this.onEventsOff = this.onEventsOff.bind(this);
     this.onScreenTouchstart = this.onScreenTouchstart.bind(this);
+    this.createWinScreen = this.createWinScreen.bind(this);
   
     this.delegateUIEvents();
     this.mediatorEvents(mediator, 'subscribe');
@@ -46,11 +46,10 @@ export default class GameUI {
   }
   
   mediatorEvents (mediator, action) {
-    // TODO: Rename events
+		mediator[action]('core/create-winscreen', this.createWinScreen);
     mediator[action]('screen/touchmove', this.trackHandPosition);
     mediator[action]('screen/touchstart', this.onScreenTouchstart);
     mediator[action]('ui/reset-assets-classes', this.resetAssetsClasses);
-    mediator[action]('ui/basket-hit', this.onBasketHit);
     mediator[action]('ui/show-winscreen', this.showWinScreen);
     mediator[action]('ui/update-hand-position', this.updateHandPosition);
     mediator[action]('ui/hide-cta', this.hideCta);
@@ -92,15 +91,10 @@ export default class GameUI {
     this.cta.style.display = 'none';
   }
   
-  onBasketHit () {
-    this.basket.classList.add('hit');
-  }
-  
   resetAssetsClasses () {
     window.setTimeout(() => {
-      this.basket.classList.remove('hit');
+      this.mediator.removeBasketHitClass();
       this.hand.classList.add('waiting');
-      // TODO: May be a problem
       this.resetHandAnglePosition();
     }, 1000);
   }
@@ -177,10 +171,6 @@ export default class GameUI {
     this.hand.style.top = cursorY - this.hand.clientHeight / 2 + 'px';
   }
   
-  getBasketMetrics () {
-    return this.basket.getBoundingClientRect();
-  }
-  
   getHandMetrics () {
     return this.hand.getBoundingClientRect();
   }
@@ -207,5 +197,30 @@ export default class GameUI {
 
 	onScreenTouchstart() {
 		window.setTimeout(() => this.showSkipBtn(), 2500);
+	}
+
+	createWinScreen() {
+		// images: [
+		// "[[{"type":"banner","width":320,"height":480}]]",
+		// "[[{"type":"banner","width":320,"height":480}]]",
+		// "[[{"type":"banner","width":320,"height":480}]]"
+		// ],
+		// title: "[[{"type":"title"}]]",
+		// rating: "[[{"type":"rating"}]]"
+		const data = this.mediator.isDevelopmentEnv() ? {
+			images: [
+				'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg',
+				'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg',
+				'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg'
+			],
+			title: 'Hello world!',
+			rating: 3
+		} : {
+			images: [],
+			title: '',
+			rating: ''
+		};
+
+		DIOInt(data);
 	}
 }

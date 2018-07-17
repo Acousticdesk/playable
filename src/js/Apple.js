@@ -36,7 +36,6 @@ export default class Apple {
   create(options) {
     this.createView(options);
     this.mediator.publish('screen/add-card', this.el);
-    this.mediator.publish('screen/touchend');
   }
   
   remove() {
@@ -46,23 +45,23 @@ export default class Apple {
     }
   }
   
-  createView(options) {
+  createView({x, y, isPlaceholder, offset}) {
     this.el = document.createElement('div');
     this.el.style.width = this.width + 'px';
     this.el.style.height = this.height + 'px';
-    this.el.style.top = options.y + 'px';
-    this.el.style.left = options.x - options.offset + 'px';
+    this.el.style.top = y + 'px';
+    this.el.style.left = x - offset + 'px';
     this.el.classList.add('card');
-    this.el.classList.toggle('placeholder', options.isPlaceholder);
+    this.el.classList.toggle('placeholder', isPlaceholder);
   }
   
   getMetrics() {
     return this.el.getBoundingClientRect();
   }
   
-  updatePosition(options) {
-    this.el.style.left = options.left + 'px';
-    this.el.style.top = options.top + 'px';
+  updatePosition({top, left}) {
+    this.el.style.left = left + 'px';
+    this.el.style.top = top + 'px';
   }
   
   canBeThrown() {
@@ -71,7 +70,7 @@ export default class Apple {
   
   throw() {
 		if (this.canBeThrown()) {
-			const { startX, startY, releasedX, releasedY } = this.mediator.getFingerCoordinates();
+			const { startX, startY } = this.mediator.getFingerCoordinates();
 			const createOptions = {
 				isPlaceholder: false,
 				x: startX,
@@ -80,64 +79,55 @@ export default class Apple {
 			};
 
 			this.create(createOptions);
-			this.requestAnimation({
-				releaseX: releasedX -this.mediator.getBasketMetrics().width / 2,
-				releasedY
-			});
+			this.requestAnimation();
 			this.mediator.publish('ui/hand-empty');
 		} else {
 			this.mediator.publish('ui/reset-hand-angle');
 		}
   }
 
-	requestAnimation({releasedX, releasedY}) {
-		const hyperB = this.mediator.getScreenMetrics().height + this.mediator.getBasketMetrics().height;
-		const hyperA = hyperB / 20;
-		const { startX, startY } = this.mediator.getFingerCoordinates();
+	requestAnimation() {
+		// ellipsis path params
+		const {hyperA, hyperB} = GameCore.getEllipsisParams(this.mediator);
+		
+		const {releasedX: x1, releasedY} = this.mediator.getFingerCoordinates();
+		const y1 = GameCore.mathToBrowserCoordinates(this.mediator, releasedY);
+		const y2 = GameCore.mathToBrowserCoordinates(this.mediator, releasedY + this.speed);
+		const x2 = GameCore.getNextXEllipsis(x1, y2, hyperA, hyperB);
 
-		window.requestAnimationFrame(() => {
-			this.updateCoordinates(
-				startX,
-				GameCore.mathToBrowserCoordinates(this.mediator, startY),
-				releasedX,
-				GameCore.mathToBrowserCoordinates(this.mediator, releasedY),
-				// parabolaParam
-				hyperA,
-				hyperB
-			);
-		});
+		this.updateCoordinates(x1, y1, x2, y2, hyperA, hyperB);
+	}
+	
+	isAppleOutOfScreen ({top, left}) {
+		if (
+			left > this.mediator.getScreenMetrics().width || top > this.mediator.getScreenMetrics().height ||
+			left < 0 || top < 0
+		) {
+			return true;
+		}
+	}
+	
+	appleOutOfScreenCase() {
+		const resetFingerCoordinates = {
+			startX: null,
+			startY: null
+		};
+
+		this.remove();
+		this.mediator.publish('finger/update-coordinates', resetFingerCoordinates);
+		this.mediator.publish('ui/reset-assets-classes');
 	}
 
 	updateCoordinates(x1, y1, x2, y2, hyperA, hyperB) {
-		let formula;
 		const nextY = y2 + this.speed;
-		const fingerPosition = this.mediator.getFingerPositionOnScreen();
-		// const {releasedX} = this.mediator.getFingerCoordinates();
-		
-		console.log(arguments);
-
-		if (fingerPosition === 'left' || !fingerPosition) {
-			formula = GameCore.getNextXHyperbola;
-		} else if (fingerPosition === 'right') {
-			formula = GameCore.getNextXHyperbolaMirrored;
-		}
-
+		const formula = GameCore.getNextXFormula(this.mediator);
 		const nextX = formula(x1, nextY, hyperA, hyperB);
-		const appleLeft = window.parseInt(nextX);
-		const appleTop = this.mediator.getScreenMetrics().height - window.parseInt(nextY);
+		const left = window.parseInt(nextX);
+		const top = this.mediator.getScreenMetrics().height - window.parseInt(nextY);
+		const newPosition = {top, left};
 
-		if (
-			appleLeft > this.mediator.getScreenMetrics().width || appleTop > this.mediator.getScreenMetrics().height ||
-			appleLeft < 0 || appleTop < 0
-		) {
-			const resetFingerCoordinates = {
-				startX: null,
-				startY: null
-			};
-
-			this.remove();
-			this.mediator.publish('finger/update-coordinates', resetFingerCoordinates);
-			this.mediator.publish('ui/reset-assets-classes');
+		if (this.isAppleOutOfScreen(newPosition)) {
+			this.appleOutOfScreenCase();
 			return;
 		}
 
@@ -146,13 +136,8 @@ export default class Apple {
 			return;
 		}
 
-		const newPosition = {
-			left: appleLeft,
-			top: appleTop
-		};
-
-		this.updatePosition(newPosition);
-
+		this.updatePosition({ left, top });
+		
 		window.requestAnimationFrame(() => this.updateCoordinates(x2, y2, nextX, nextY, hyperA, hyperB));
 	}
 }

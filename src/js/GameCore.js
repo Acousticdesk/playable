@@ -1,13 +1,9 @@
-import DIOInt from 'dio-intint';
-
 export default class GameCore {
   constructor(mediator) {
-    // Webpack Define Plugin variable
-    if (DEVELOPMENT) {
+    if (this.isDevelopmentEnv()) {
       window.pressXtoWin = this.win.bind(this);
     }
     
-    this.createWinScreen = this.createWinScreen.bind(this);
     this.calculateAngle = this.calculateAngle.bind(this);
     this.onEventsOff = this.onEventsOff.bind(this);
     this.start = this.start.bind(this);
@@ -24,22 +20,31 @@ export default class GameCore {
     return Math.round(GameCore.getRandomArbitrary(min, max));
   }
   
-  static getNextXHyperbola(x1, y2, aParam, bParam) {
+  static getNextXEllipsis(x1, y2, aParam, bParam) {
 		return -(
 		  Math.sqrt( Math.pow(aParam, 2) * (1 - Math.pow(y2, 2) /
       Math.pow(bParam, 2)) )
     ) +  aParam + x1
   }
   
-  static getNextXHyperbolaMirrored(x1, y2, aParam, bParam) {
+  static getNextXEllipsisMirrored(x1, y2, aParam, bParam) {
     return Math.sqrt(
       Math.pow(aParam, 2) * (1 - Math.pow(y2, 2) /
       Math.pow(bParam, 2))
     ) + x1 - aParam;
   }
+
+	static getNextXFormula (mediator) {
+		const fingerPosition = mediator.getFingerPositionOnScreen();
+
+		if (fingerPosition === 'left' || !fingerPosition) {
+			return GameCore.getNextXEllipsis;
+		}
+
+		return GameCore.getNextXEllipsisMirrored;
+	}
   
   mediatorEvents (mediator, action) {
-    mediator[action]('core/create-winscreen', this.createWinScreen);
     mediator[action]('core/calculate-hand-angle', this.calculateAngle);
     mediator[action]('core/win', this.win);
     mediator[action]('all/events-off', this.onEventsOff);
@@ -48,31 +53,6 @@ export default class GameCore {
   
   onEventsOff() {
     this.mediatorEvents(this.mediator, 'unsub')
-  }
-  
-  createWinScreen() {
-    // images: [
-    // "[[{"type":"banner","width":320,"height":480}]]",
-    // "[[{"type":"banner","width":320,"height":480}]]",
-    // "[[{"type":"banner","width":320,"height":480}]]"
-    // ],
-    // title: "[[{"type":"title"}]]",
-    // rating: "[[{"type":"rating"}]]"
-    const data = DEVELOPMENT ? {
-      images: [
-        'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg',
-        'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg',
-        'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg'
-      ],
-      title: 'Hello world!',
-      rating: 3
-    } : {
-      images: [],
-      title: '',
-      rating: ''
-    };
-    
-    DIOInt(data);
   }
   
   // Map coordinates from browser's ones to Math ones
@@ -118,10 +98,19 @@ export default class GameCore {
 			y: updateFingerCoordinates.startY,
 			offset: handBox.width / 2
 		});
-		this.mediator.publish('card/request-animation', {
-				releasedX: updateFingerCoordinates.startX,
-			  releasedY: updateFingerCoordinates.startY
-    });
+		this.mediator.publish('card/request-animation');
+  }
+  
+  static getEllipsisParams(mediator) {
+		const hyperB = mediator.getScreenMetrics().height + mediator.getBasketMetrics().height;
+		const hyperA = hyperB / 20;
+		
+    return {hyperA, hyperB}; 
+  }
+  
+  isDevelopmentEnv() {
+		// Webpack Define Plugin variable
+    return DEVELOPMENT;
   }
 };
 

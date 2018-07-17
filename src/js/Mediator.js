@@ -47,7 +47,7 @@ export default class PlayableAdMediator extends PubSub {
   }
   
   getBasketMetrics() {
-    return this.gameUI.getBasketMetrics();
+    return this.basket.getMetrics();
   }
   
   getHandMetrics() {
@@ -76,5 +76,13 @@ export default class PlayableAdMediator extends PubSub {
   
   isBasketCollision() {
     return this.basket.isCollision();
+  }
+  
+  removeBasketHitClass() {
+		this.basket.hitStyleClass('remove');
+  }
+  
+  isDevelopmentEnv() {
+    return this.gameCore.isDevelopmentEnv();
   }
 }
