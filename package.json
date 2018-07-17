@@ -8,7 +8,7 @@
     "build:dev": "ENVIRONMENT=DEV webpack --mode development",
     "build:prod": "ENVIRONMENT=PROD webpack --mode production",
     "build": "npm run build:dev",
-    "watch": "webpack --mode development --watch",
+    "watch": "ENVIRONMENT=DEV webpack --mode development --watch",
     "clean": "rm -rf dist",
     "clean-deps": "rm -rf node_modules"
   },

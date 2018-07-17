@@ -52,7 +52,8 @@ export default class Apple {
     this.el.style.top = y + 'px';
     this.el.style.left = x - offset + 'px';
     this.el.classList.add('card');
-    this.el.classList.toggle('placeholder', isPlaceholder);
+    console.log(isPlaceholder);
+    this.el.classList.toggle('placeholder', !!isPlaceholder);
   }
   
   getMetrics() {
@@ -68,31 +69,32 @@ export default class Apple {
 		return !this.isOnScreen() && this.mediator.getIsSwiped() && this.mediator.isValidSwipe();
   }
   
-  throw() {
-		if (this.canBeThrown()) {
-			const { startX, startY } = this.mediator.getFingerCoordinates();
+  throw(preview) {
+		if (this.canBeThrown() || preview) {
+			const {startX, startY} = preview ? preview : this.mediator.getFingerCoordinates();
 			const createOptions = {
-				isPlaceholder: false,
+				isPlaceholder: preview && preview.isPlaceholder,
 				x: startX,
 				y: startY,
 				offset: this.mediator.getHandMetrics().width / 2
 			};
 
 			this.create(createOptions);
-			this.requestAnimation();
+			this.requestAnimation(preview);
 			this.mediator.publish('ui/hand-empty');
 		} else {
 			this.mediator.publish('ui/reset-hand-angle');
 		}
   }
 
-	requestAnimation() {
+	requestAnimation(preview) {
 		// ellipsis path params
 		const {hyperA, hyperB} = GameCore.getEllipsisParams(this.mediator);
 		
-		const {releasedX: x1, releasedY} = this.mediator.getFingerCoordinates();
+		const {releasedX: x1, releasedY} = preview ? preview : this.mediator.getFingerCoordinates();
 		const y1 = GameCore.mathToBrowserCoordinates(this.mediator, releasedY);
 		const y2 = GameCore.mathToBrowserCoordinates(this.mediator, releasedY + this.speed);
+		
 		const x2 = GameCore.getNextXEllipsis(x1, y2, hyperA, hyperB);
 
 		this.updateCoordinates(x1, y1, x2, y2, hyperA, hyperB);
@@ -125,6 +127,8 @@ export default class Apple {
 		const left = window.parseInt(nextX);
 		const top = this.mediator.getScreenMetrics().height - window.parseInt(nextY);
 		const newPosition = {top, left};
+
+		console.log(top, left);
 
 		if (this.isAppleOutOfScreen(newPosition)) {
 			this.appleOutOfScreenCase();

@@ -79,7 +79,7 @@ export default class GameCore {
     }
     
     this.mediator.publish('ui/update-hand-position', {
-      deg: deg
+      deg
     });
   }
   
@@ -91,14 +91,15 @@ export default class GameCore {
 			startY: handBox.top
 		};
 
-    this.mediator.publish('finger/update-coordinates', updateFingerCoordinates);
-		this.mediator.publish('card/create', {
-			isPlaceholder: true,
-			x: updateFingerCoordinates.startX,
-			y: updateFingerCoordinates.startY,
-			offset: handBox.width / 2
+		this.mediator.updateFingerCoordinates(updateFingerCoordinates);
+		
+		this.mediator.throwApple({
+			startX: updateFingerCoordinates.startX,
+			startY: updateFingerCoordinates.startY,
+			releasedX: updateFingerCoordinates.startX,
+			releasedY: updateFingerCoordinates.startY,
+			isPlaceholder: true
 		});
-		this.mediator.publish('card/request-animation');
   }
   
   static getEllipsisParams(mediator) {

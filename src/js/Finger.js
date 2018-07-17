@@ -11,17 +11,17 @@ export default class CoordinatesManager {
 
 		this.isSwiped = false;
 
-		this.setCoordinates = this.setCoordinates.bind(this);
+		this.updateCoordinates = this.updateCoordinates.bind(this);
 		this.updateIsSwiped = this.updateIsSwiped.bind(this);
 		this.mediatorEvents(mediator, 'subscribe');
 	}
 
 	mediatorEvents(mediator, action) {
-		mediator[action]('finger/update-coordinates', this.setCoordinates);
+		mediator[action]('finger/update-coordinates', this.updateCoordinates);
 		mediator[action]('screen/touchmove', this.updateIsSwiped);
 	}
 
-	setCoordinates (coordinates) {
+	updateCoordinates (coordinates) {
 		for (let key in coordinates) {
 			if (coordinates.hasOwnProperty(key)) {
 				this.coordinates[key] = coordinates[key];
