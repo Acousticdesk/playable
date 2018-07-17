@@ -3,7 +3,7 @@ export default class Screen  {
     this.el = document.querySelector('.screen');
     this.closeBtn = document.querySelector('.close-btn');
     
-    this.addCard = this.addCard.bind(this);
+    this.addApple = this.addApple.bind(this);
     this.onEventsOff = this.onEventsOff.bind(this);
     this.remove = this.remove.bind(this);
     
@@ -22,12 +22,12 @@ export default class Screen  {
   }
   
   mediatorEvents (mediator, action) {
-    mediator[action]('screen/add-card', this.addCard);
+    mediator[action]('screen/add-card', this.addApple);
     mediator[action]('all/events-off', this.onEventsOff);
   }
   
-  addCard (card) {
-    this.el.appendChild(card);
+  addApple (apple) {
+    this.el.appendChild(apple);
   }
   
   onTouchstart (e) {
@@ -40,11 +40,11 @@ export default class Screen  {
   }
   
   onTouchend (e) {
+		this.mediator.publish('finger/update-coordinates', {
+			releasedX: e.changedTouches && e.changedTouches[0].clientX,
+			releasedY: e.changedTouches && e.changedTouches[0].clientY
+		});
 		this.mediator.publish('screen/touchend');
-    this.mediator.publish('finger/update-coordinates', {
-      releasedX: e.changedTouches && e.changedTouches[0].clientX,
-      releasedY: e.changedTouches && e.changedTouches[0].clientY
-    });
   }
   
   onTouchmove (e) {

@@ -92,7 +92,7 @@ export default class Card {
 
 	requestAnimation({releasedX, releasedY}) {
 		const hyperB = this.mediator.getScreenMetrics().height + this.mediator.getBasketMetrics().height;
-		const hyperA = hyperB / 1.75;
+		const hyperA = hyperB / 20;
 		const { startX, startY } = this.mediator.getFingerCoordinates();
 
 		window.requestAnimationFrame(() => {
@@ -120,7 +120,7 @@ export default class Card {
 			formula = GameCore.getNextXHyperbolaMirrored;
 		}
 
-		const nextX = formula(hyperA, hyperB, releasedX, nextY);
+		const nextX = formula(x1, nextY, hyperA, hyperB);
 		const cardLeft = window.parseInt(nextX);
 		const cardTop = this.mediator.getScreenMetrics().height - window.parseInt(nextY);
 
