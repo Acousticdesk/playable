@@ -2,7 +2,7 @@ export default class Basket {
 	constructor(mediator) {
 		this.el = document.querySelector('.basket');
 		
-		this.onHit = this.onHit.bind(this);
+		this.onWin = this.onWin.bind(this);
 		
 		this.mediatorEvents(mediator, 'subscribe');
 	}
@@ -26,14 +26,14 @@ export default class Basket {
 	}
 	
 	mediatorEvents(mediator, action) {
-		mediator[action]('ui/basket-hit', this.onHit);
+		mediator[action]('core/win', this.onWin);
 	}
 	
 	hitStyleClass(action) {
 		this.el.classList[action]('hit');
 	}
 	
-	onHit() {
+	onWin() {
 		this.hitStyleClass('add');
 	}
 }

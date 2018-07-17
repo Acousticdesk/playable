@@ -86,11 +86,22 @@ export default class PlayableAdMediator extends PubSub {
     return this.gameCore.isDevelopmentEnv();
   }
   
-  throwApple(previewOptions) {
-    this.apple.throw(previewOptions);
+  updateFingerCoordinates(coordinates) {
+    this.finger.updateCoordinates(coordinates);
+    return this;
   }
   
-  updateFingerCoordinates() {
-    this.finger.updateCoordinates();
+  stopPreview() {
+    this.preview.stop();
+    return this;
+  }
+  
+  getHandAngle() {
+    return this.gameCore.getHandAngle();
+  }
+  
+  previewThrow() {
+    this.apple.previewThrow();
+    return this;
   }
 }

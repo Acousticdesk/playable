@@ -31,16 +31,17 @@ export default class Screen  {
   }
   
   onTouchstart (e) {
-		this.mediator.publish('preview/stop');
 		this.mediator.publish('screen/touchstart');
-    this.mediator.publish('finger/update-coordinates', {
-      startX: e.changedTouches && e.changedTouches[0].clientX,
-      startY: e.changedTouches && e.changedTouches[0].clientY
-    });
+		this.mediator
+      .stopPreview()
+      .updateFingerCoordinates({
+        startX: e.changedTouches && e.changedTouches[0].clientX,
+        startY: e.changedTouches && e.changedTouches[0].clientY
+      });
   }
   
   onTouchend (e) {
-		this.mediator.publish('finger/update-coordinates', {
+		this.mediator.updateFingerCoordinates({
 			releasedX: e.changedTouches && e.changedTouches[0].clientX,
 			releasedY: e.changedTouches && e.changedTouches[0].clientY
 		});
@@ -54,7 +55,8 @@ export default class Screen  {
 		};
     
     this.mediator.publish('screen/touchmove', data);
-    this.mediator.publish('finger/update-coordinates', data);
+    this.mediator.updateFingerCoordinates(data);
+    
 		this.fingerPosition = data.moveX < this.getMetrics().width / 2 ? 'left' : 'right';
   }
   

@@ -11,13 +11,11 @@ export default class CoordinatesManager {
 
 		this.isSwiped = false;
 
-		this.updateCoordinates = this.updateCoordinates.bind(this);
 		this.updateIsSwiped = this.updateIsSwiped.bind(this);
 		this.mediatorEvents(mediator, 'subscribe');
 	}
 
 	mediatorEvents(mediator, action) {
-		mediator[action]('finger/update-coordinates', this.updateCoordinates);
 		mediator[action]('screen/touchmove', this.updateIsSwiped);
 	}
 

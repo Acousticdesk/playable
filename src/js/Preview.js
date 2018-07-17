@@ -1,34 +1,28 @@
 export default class Preview {
-	constructor(mediator) {
+	constructor() {
 		this.interval = null;
 		this.isPreviewStopped = false;
 		this.setInterval = this.setInterval.bind(this);
-		this.stopPreview = this.stopPreview.bind(this);
-		this.mediatorEvents(mediator, 'subscribe');
+		this.stop = this.stop.bind(this);
 	};
 
 	setInterval(interval) {
 		this.interval = interval;
 	};
 
-	mediatorEvents(mediator, action) {
-		mediator[action]('preview/set-interval', this.setInterval);
-		mediator[action]('preview/stop', this.stopPreview);
-	};
-
 	getIsPreviewStopped() {
 		return this.isPreviewStopped;
 	};
 
-	stopPreview() {
+	stop() {
 		this.isPreviewStopped = true;
 		window.clearInterval(this.interval);
-		this.mediator.publish('ui/hide-cta');
+		this.mediator.publish('preview/stop');
 	};
 
 	start() {
-		const interval = window.setInterval(() => this.mediator.publish('core/start'), 3000);
+		const interval = window.setInterval(() => this.mediator.previewThrow(), 3000);
 
-		this.mediator.publish('preview/set-interval', interval);
+		this.setInterval(interval);
 	};
 }

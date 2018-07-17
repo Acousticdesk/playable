@@ -10,7 +10,7 @@ export default class GameUI {
     this.animation = document.querySelector('.win-animation');
     this.skipBtn = document.querySelector('.skip-game');
   
-    this.trackHandPosition = this.trackHandPosition.bind(this);
+    this.adjustHandView = this.adjustHandView.bind(this);
     this.resetAssetsClasses = this.resetAssetsClasses.bind(this);
     this.showWinScreen = this.showWinScreen.bind(this);
     this.updateHandPosition = this.updateHandPosition.bind(this);
@@ -20,7 +20,6 @@ export default class GameUI {
     this.showSkipBtn = this.showSkipBtn.bind(this);
     this.onEventsOff = this.onEventsOff.bind(this);
     this.onScreenTouchstart = this.onScreenTouchstart.bind(this);
-    this.createWinScreen = this.createWinScreen.bind(this);
   
     this.delegateUIEvents();
     this.mediatorEvents(mediator, 'subscribe');
@@ -46,13 +45,11 @@ export default class GameUI {
   }
   
   mediatorEvents (mediator, action) {
-		mediator[action]('core/create-winscreen', this.createWinScreen);
-    mediator[action]('screen/touchmove', this.trackHandPosition);
+    mediator[action]('screen/touchmove', this.adjustHandView);
     mediator[action]('screen/touchstart', this.onScreenTouchstart);
     mediator[action]('ui/reset-assets-classes', this.resetAssetsClasses);
-    mediator[action]('ui/show-winscreen', this.showWinScreen);
-    mediator[action]('ui/update-hand-position', this.updateHandPosition);
-    mediator[action]('ui/hide-cta', this.hideCta);
+    mediator[action]('core/win', this.showWinScreen);
+    mediator[action]('preview/stop', this.hideCta);
     mediator[action]('ui/reset-hand-angle', this.resetHandAnglePosition);
     mediator[action]('ui/hand-empty', this.applyHandEmptyClass);
     mediator[action]('all/events-off', this.onEventsOff);
@@ -113,7 +110,7 @@ export default class GameUI {
     
     const onTransitionend = (e) => {
       if (e.target === this.winScreen) {
-        this.mediator.publish('core/create-winscreen');
+        this.createWinScreen();
         this.mediator.publish('all/events-off');
         this.winScreen.removeEventListener('transitionend', onTransitionend);
       }
@@ -175,24 +172,20 @@ export default class GameUI {
     return this.hand.getBoundingClientRect();
   }
   
-  trackHandPosition () {
+  adjustHandView () {
     const releasedSide = this.mediator.getFingerPositionOnScreen();
+    const handAngle = this.mediator.getHandAngle();
     
-    // if ( !this.mediator.isValidHandPosition() ) {
-    //   return;
-    // }
-    
-    this.mediator.publish('core/calculate-hand-angle');
-    // this.moveHand();
+    this.updateHandPosition(handAngle);
     this.applyHandPositionClass(releasedSide);
   }
   
-  updateHandPosition (options) {
+  updateHandPosition (deg) {
     const releasedSide = this.mediator.getFingerPositionOnScreen();
     
     this.hand.classList.remove('waiting');
     this.hand.style.transform =
-      'rotate(' + (releasedSide === 'right' ? options.deg : -options.deg) + 'deg)';
+      'rotate(' + (releasedSide === 'right' ? deg : -deg) + 'deg)';
   }
 
 	onScreenTouchstart() {

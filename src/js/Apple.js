@@ -19,7 +19,7 @@ export default class Apple {
   
   mediatorEvents(mediator, action) {
     mediator[action]('card/create', this.create);
-    mediator[action]('card/remove', this.remove);
+    mediator[action]('core/win', this.remove);
     mediator[action]('card/request-animation', this.requestAnimation);
     mediator[action]('all/events-off', this.onEventsOff);
     mediator[action]('screen/touchend', this.throw);
@@ -52,7 +52,6 @@ export default class Apple {
     this.el.style.top = y + 'px';
     this.el.style.left = x - offset + 'px';
     this.el.classList.add('card');
-    console.log(isPlaceholder);
     this.el.classList.toggle('placeholder', !!isPlaceholder);
   }
   
@@ -116,8 +115,10 @@ export default class Apple {
 		};
 
 		this.remove();
-		this.mediator.publish('finger/update-coordinates', resetFingerCoordinates);
-		this.mediator.publish('ui/reset-assets-classes');
+		
+		this.mediator
+			.updateFingerCoordinates(resetFingerCoordinates)
+			.publish('ui/reset-assets-classes');
 	}
 
 	updateCoordinates(x1, y1, x2, y2, hyperA, hyperB) {
@@ -127,9 +128,7 @@ export default class Apple {
 		const left = window.parseInt(nextX);
 		const top = this.mediator.getScreenMetrics().height - window.parseInt(nextY);
 		const newPosition = {top, left};
-
-		console.log(top, left);
-
+		
 		if (this.isAppleOutOfScreen(newPosition)) {
 			this.appleOutOfScreenCase();
 			return;
@@ -143,5 +142,24 @@ export default class Apple {
 		this.updatePosition({ left, top });
 		
 		window.requestAnimationFrame(() => this.updateCoordinates(x2, y2, nextX, nextY, hyperA, hyperB));
+	}
+
+	previewThrow() {
+		const random = GameCore.getRandomArbitrary(-20, 20);
+		const handBox = this.mediator.getHandMetrics();
+		const updateFingerCoordinates = {
+			startX: handBox.left + handBox.width / 2 + random,
+			startY: handBox.top
+		};
+
+		this.mediator.updateFingerCoordinates(updateFingerCoordinates);
+
+		this.throw({
+			startX: updateFingerCoordinates.startX,
+			startY: updateFingerCoordinates.startY,
+			releasedX: updateFingerCoordinates.startX,
+			releasedY: updateFingerCoordinates.startY,
+			isPlaceholder: true
+		});
 	}
 }
