@@ -1,5 +1,3 @@
-import GameCore from './GameCore';
-
 export default class Preview {
 	constructor(mediator) {
 		this.interval = null;
@@ -30,12 +28,7 @@ export default class Preview {
 	};
 
 	start() {
-		const interval = window.setInterval(() => {
-
-			if (document.hasFocus()) {
-				this.mediator.publish('core/start');
-			}
-		}, 3000);
+		const interval = window.setInterval(() => this.mediator.publish('core/start'), 3000);
 
 		this.mediator.publish('preview/set-interval', interval);
 	};

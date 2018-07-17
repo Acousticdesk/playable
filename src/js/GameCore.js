@@ -24,14 +24,14 @@ export default class GameCore {
     return Math.round(GameCore.getRandomArbitrary(min, max));
   }
   
-  static getNextXHyperbola(aParam, bParam, x1, y2) {
+  static getNextXHyperbola(x1, y2, aParam, bParam) {
 		return -(
 		  Math.sqrt( Math.pow(aParam, 2) * (1 - Math.pow(y2, 2) /
       Math.pow(bParam, 2)) )
     ) +  aParam + x1
   }
   
-  static getNextXHyperbolaMirrored(aParam, bParam, x1, y2) {
+  static getNextXHyperbolaMirrored(x1, y2, aParam, bParam) {
     return Math.sqrt(
       Math.pow(aParam, 2) * (1 - Math.pow(y2, 2) /
       Math.pow(bParam, 2))
@@ -110,7 +110,7 @@ export default class GameCore {
 		  startX: handBox.left + handBox.width / 2 + random,
 			startY: handBox.top
 		};
-    
+
     this.mediator.publish('finger/update-coordinates', updateFingerCoordinates);
 		this.mediator.publish('card/create', {
 			isPlaceholder: true,

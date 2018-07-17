@@ -1,6 +1,6 @@
 import GameCore from './GameCore';
 
-export default class Card {
+export default class Apple {
   constructor(mediator) {
     this.width = 50;
     this.height = 80;
@@ -112,7 +112,9 @@ export default class Card {
 		let formula;
 		const nextY = y2 + this.speed;
 		const fingerPosition = this.mediator.getFingerPositionOnScreen();
-		const {releasedX} = this.mediator.getFingerCoordinates();
+		// const {releasedX} = this.mediator.getFingerCoordinates();
+		
+		console.log(arguments);
 
 		if (fingerPosition === 'left' || !fingerPosition) {
 			formula = GameCore.getNextXHyperbola;
@@ -121,12 +123,12 @@ export default class Card {
 		}
 
 		const nextX = formula(x1, nextY, hyperA, hyperB);
-		const cardLeft = window.parseInt(nextX);
-		const cardTop = this.mediator.getScreenMetrics().height - window.parseInt(nextY);
+		const appleLeft = window.parseInt(nextX);
+		const appleTop = this.mediator.getScreenMetrics().height - window.parseInt(nextY);
 
 		if (
-			cardLeft > this.mediator.getScreenMetrics().width || cardTop > this.mediator.getScreenMetrics().height ||
-			cardLeft < 0 || cardTop < 0
+			appleLeft > this.mediator.getScreenMetrics().width || appleTop > this.mediator.getScreenMetrics().height ||
+			appleLeft < 0 || appleTop < 0
 		) {
 			const resetFingerCoordinates = {
 				startX: null,
@@ -145,8 +147,8 @@ export default class Card {
 		}
 
 		const newPosition = {
-			left: cardLeft,
-			top: cardTop
+			left: appleLeft,
+			top: appleTop
 		};
 
 		this.updatePosition(newPosition);

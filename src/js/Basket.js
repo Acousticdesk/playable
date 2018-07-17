@@ -1,14 +1,14 @@
 export default class Basket {
 	isCollision () {
 		const basketRect = this.mediator.getBasketMetrics();
-		const elRect = this.mediator.getCardMetrics();
+		const appleRect = this.mediator.getAppleMetrics();
 		const basketHoleOnPictureDiff = 20;
 		const sideDiff = basketRect.width / 2;
 
-		if (elRect.left < basketRect.left + basketRect.width - sideDiff &&
-			elRect.left + elRect.width > basketRect.left + sideDiff &&
-			elRect.top < basketRect.top + basketHoleOnPictureDiff &&
-			elRect.height + elRect.top > basketRect.top + basketHoleOnPictureDiff) {
+		if (appleRect.left < basketRect.left + basketRect.width - sideDiff &&
+			appleRect.left + appleRect.width > basketRect.left + sideDiff &&
+			appleRect.top < basketRect.top + basketHoleOnPictureDiff &&
+			appleRect.height + appleRect.top > basketRect.top + basketHoleOnPictureDiff) {
 			return true;
 		}
 	}
