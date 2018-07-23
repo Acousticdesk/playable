@@ -2,8 +2,6 @@ import GameCore from './GameCore';
 
 export default class Apple {
   constructor(mediator) {
-    this.width = 50;
-    this.height = 80;
     this.speed = 10;
     this.el = null;
     
@@ -47,8 +45,6 @@ export default class Apple {
   
   createView({x, y, isPlaceholder, offset}) {
     this.el = document.createElement('div');
-    this.el.style.width = this.width + 'px';
-    this.el.style.height = this.height + 'px';
     this.el.style.top = y + 'px';
     this.el.style.left = x - offset + 'px';
     this.el.classList.add('card');
@@ -145,6 +141,10 @@ export default class Apple {
 	}
 
 	previewThrow() {
+  	if (!document.hasFocus()) {
+  		return;
+		}
+
 		const random = GameCore.getRandomArbitrary(-20, 20);
 		const handBox = this.mediator.getHandMetrics();
 		const updateFingerCoordinates = {

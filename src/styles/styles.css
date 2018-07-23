@@ -1,6 +1,14 @@
 @import '../../node_modules/dio-intint/dist/styles.css';
 
-/* TODO: Refactor styles */
+:root {
+    font-size: 16px;
+}
+
+@media screen and (max-width: 768px) {
+    :root {
+        font-size: 12px;
+    }
+}
 
 /* Playable Ad */
 html, body {
@@ -16,7 +24,7 @@ html, body {
         left: 0;
     }
     50% {
-        left: calc(100% - 90px);
+        left: calc(100% - 5.625em);
     }
     100% {
         left: 0;
@@ -32,15 +40,15 @@ html, body {
 }
 @keyframes waiting {
     0% {
-        bottom: 50px;
+        bottom: 3.125em;
         transform: rotate(-45deg);
     }
     87% {
-        bottom: 100px;
+        bottom: 6.25em;
         transform: rotate(45deg);
     }
     100% {
-        bottom: 50px;
+        bottom: 3.125em;
         transform: rotate(-45deg);
     }
 }
@@ -96,17 +104,17 @@ html, body {
     padding: 0 10%;
     width: 100%;
     text-align: center;
-    font-size: 25px;
+    font-size: 1.5625em;
     animation: cta 2s ease-in-out infinite;
     box-sizing: border-box;
 }
 .hand {
     position: absolute;
-    width: 112.5px;
-    height: 80px;
-    bottom: 50px;
+    width: 7.03125em;
+    height: 5em;
+    bottom: 3.125em;
     left: 50%;
-    margin-left: -56px;
+    margin-left: -3.5em;
 }
 .hand.original {
     transform-origin: 0 70%;
@@ -119,61 +127,45 @@ html, body {
     background-size: contain;
 }
 .hand.original-empty {
-    height: 68px;
+    height: 4.25em;
     transform-origin: 0 70%;
     background: url('var(--URL)/hand_empty.png');
     background-size: 100%;
 }
 .hand.inverted-empty {
-    height: 68px;
+    height: 4.25em;
     transform-origin: 100% 70%;
     background: url('var(--URL)/hand_empty_inverted.png');
     background-size: 100%;
 }
-/*.hand:after {*/
-/*position: absolute;*/
-/*content: ' ';*/
-/*width: 40px;*/
-/*height: 40px;*/
-/*top: 50%;*/
-/*margin-top: -45px;*/
-/*background: url('./dealdash.jpg');*/
-/*background-size: contain;*/
-/*}*/
-/*.hand.original:after {*/
-/*right: 30px;*/
-/*transform: rotate(-15deg);*/
-/*}*/
-/*.hand.inverted:after {*/
-/*left: 30px;*/
-/*transform: rotate(15deg);*/
-/*}*/
+
 .hand.waiting {
     animation: waiting 1.5s infinite;
 }
 .screen {
     position: relative;
+    width: 100%;
     height: 100%;
     overflow: hidden;
-    background: url('var(--URL)/back.jpg') no-repeat;
+    background: url('var(--URL)/back.jpeg') no-repeat;
     background-size: cover;
     font-family: sans-serif;
 }
 .basket {
-    width: 90px;
-    height: 117px;
+    width: 5.625em;
+    height: 7.3125em;
     background: url('var(--URL)/hat.png') no-repeat;
     background-size: 100% 100%;
     position: absolute;
-    top: 50px;
+    top: 3.125em;
     animation: sliding 3s forwards infinite linear;
 }
 .basket.hit {
     animation: hit 1s, sliding 3s forwards infinite linear;
 }
 .card {
-    width: 60px;
-    height: 62.5px;
+    width: 3.75em;
+    height: 3.90625em;
     position: absolute;
     animation: rotation 1s linear infinite forwards;
     background: url('var(--URL)/card.png') no-repeat;
@@ -183,7 +175,7 @@ html, body {
     opacity: 0.3;
 }
 .score {
-    padding: 10px;
+    padding: 0.625em;
     font-family: sans-serif;
 }
 .close-btn {
@@ -193,10 +185,10 @@ html, body {
     z-index: 100;
     border: 1px solid #fff;
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    font-size: 20px;
+    width: 1.875em;
+    height: 1.875em;
+    line-height: 1.875em;
+    font-size: 1.25em;
     color: #fff;
     cursor: pointer;
     text-align: center;
@@ -234,10 +226,10 @@ html, body {
     left: 50%;
     transform: translate(-50%);
     color: #fff;
-    font-size: 70px;
+    font-size: 4.375em;
     text-transform: uppercase;
     z-index: 100;
-    padding: 55px;
+    padding: 0.714285714285714em;
     text-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     opacity: 0;
     transition: opacity .3s;
@@ -252,13 +244,13 @@ html, body {
 
 @keyframes win-animation-appearance {
     0% {
-        transform: translate(-50%) scale(1) rotate(0deg);
+        transform: translate(-50%) scale(1);
     }
     50% {
-        transform: translate(-50%) scale(1.5) rotate(15deg);
+        transform: translate(-50%) scale(1.5);
     }
     100% {
-        transform: translate(-50%) scale(1) rotate(0deg);
+        transform: translate(-50%) scale(1);
     }
 }
 
@@ -279,18 +271,18 @@ html, body {
 }
 
 .confetti.big {
-    width: 25px;
-    height: 25px;
+    width: 0.357142857142857em;
+    height: 0.357142857142857em;
 }
 
 .confetti.med {
-    width: 20px;
-    height: 20px;
+    width: 0.285714285714286em;
+    height: 0.285714285714286em;
 }
 
 .confetti.small {
-    width: 15px;
-    height: 15px;
+    width: 0.214285714285714em;
+    height: 0.214285714285714em;
 }
 
 .confetti.red {
@@ -331,14 +323,18 @@ html, body {
     position: absolute;
     right: 20px;
     bottom: 20px;
-    font-size: 20px;
+    font-size: 1.25em;
     background: #fff;
     color: #333;
-    padding: 20px;
+    padding: 1.25em;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
     transition: opacity .3s;
 }
 
 .skip-game:active {
     box-shadow: none;
+}
+
+.preload {
+    display: none;
 }
