@@ -12,11 +12,13 @@ export default class CoordinatesManager {
 		this.isSwiped = false;
 
 		this.updateIsSwiped = this.updateIsSwiped.bind(this);
+		this.onEventsOff = this.onEventsOff.bind(this);
 		this.mediatorEvents(mediator, 'subscribe');
 	}
 
 	mediatorEvents(mediator, action) {
 		mediator[action]('screen/touchmove', this.updateIsSwiped);
+		mediator[action]('all/events-off', this.onEventsOff);
 	}
 
 	updateCoordinates (coordinates) {
@@ -49,5 +51,9 @@ export default class CoordinatesManager {
 			Math.abs(releasedY - startY) > validSwipeDistance;
 
 		return startX && startY && isSwipeReleased;
+	}
+	
+	onEventsOff() {
+		this.mediatorEvents(this.mediator, 'unsub');
 	}
 }

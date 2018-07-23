@@ -3,6 +3,7 @@ export default class Basket {
 		this.el = document.querySelector('.basket');
 		
 		this.onWin = this.onWin.bind(this);
+		this.onEventsOff = this.onEventsOff.bind(this);
 		
 		this.mediatorEvents(mediator, 'subscribe');
 	}
@@ -27,6 +28,7 @@ export default class Basket {
 	
 	mediatorEvents(mediator, action) {
 		mediator[action]('core/win', this.onWin);
+		mediator[action]('all/events-off', this.onEventsOff);
 	}
 	
 	hitStyleClass(action) {
@@ -35,5 +37,9 @@ export default class Basket {
 	
 	onWin() {
 		this.hitStyleClass('add');
+	}
+
+	onEventsOff() {
+		this.mediatorEvents(this.mediator, 'unsub');
 	}
 }
