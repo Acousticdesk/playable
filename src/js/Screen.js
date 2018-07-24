@@ -1,20 +1,20 @@
 export default class Screen  {
   constructor (mediator) {
     this.el = document.querySelector('.screen');
-    this.closeBtn = document.querySelector('.close-btn');
+    // this.closeBtn = document.querySelector('.close-btn');
     
     this.addApple = this.addApple.bind(this);
     this.onEventsOff = this.onEventsOff.bind(this);
     this.remove = this.remove.bind(this);
     
     this.mediatorEvents(mediator, 'subscribe');
-    this.closeBtnEvent('add');
+    // this.closeBtnEvent('add');
     this.domEvents('add');
   }
   
-  closeBtnEvent (action) {
-    this.closeBtn[action + 'EventListener']('click', this.remove);
-  }
+  // closeBtnEvent (action) {
+  //   this.closeBtn[action + 'EventListener']('click', this.remove);
+  // }
   
   onEventsOff () {
     this.domEvents('remove');
@@ -61,7 +61,7 @@ export default class Screen  {
   }
   
   remove () {
-    this.closeBtnEvent('remove');
+    // this.closeBtnEvent('remove');
     this.el.parentElement.removeChild(this.el);
   }
   
