@@ -21,13 +21,13 @@ html, body {
 }
 @keyframes sliding {
     0% {
-        left: 0;
+        transform: translateX(0);
     }
     50% {
-        left: calc(100% - 5.625em);
+        transform: translateX(320px);
     }
     100% {
-        left: 0;
+        transform: translateX(0);
     }
 }
 @keyframes rotation {
@@ -167,7 +167,7 @@ html, body {
     width: 3.75em;
     height: 3.90625em;
     position: absolute;
-    animation: rotation 1s linear infinite forwards;
+    /*animation: rotation 1s linear infinite forwards;*/
     background: url('var(--URL)/card.png') no-repeat;
     background-size: contain;
 }

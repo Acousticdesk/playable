@@ -45,8 +45,9 @@ export default class Apple {
   
   createView({x, y, isPlaceholder, offset}) {
     this.el = document.createElement('div');
-    this.el.style.top = y + 'px';
-    this.el.style.left = x - offset + 'px';
+    // this.el.style.top = y + 'px';
+    // this.el.style.left = x - offset + 'px';
+		this.el.style.transform = `translate(${x - offset}px, ${y}px)`;
     this.el.classList.add('card');
     this.el.classList.toggle('placeholder', !!isPlaceholder);
   }
@@ -56,8 +57,10 @@ export default class Apple {
   }
   
   updatePosition({top, left}) {
-    this.el.style.left = left + 'px';
-    this.el.style.top = top + 'px';
+    // this.el.style.left = left + 'px';
+    // this.el.style.top = top + 'px';
+		this.el.style.transform = `translate(${left}px, ${top}px)`;
+		console.log(this.el.style.transform);
   }
   
   canBeThrown() {
