@@ -24,6 +24,7 @@ export default class GameUI {
     this.setGenericStyles(mediator);
     this.delegateUIEvents();
     this.mediatorEvents(mediator, 'subscribe');
+		mediator.startBasketAnimation();
   }
   
   setGenericStyles(mediator) {

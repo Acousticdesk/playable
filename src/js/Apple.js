@@ -60,7 +60,6 @@ export default class Apple {
     // this.el.style.left = left + 'px';
     // this.el.style.top = top + 'px';
 		this.el.style.transform = `translate(${left}px, ${top}px)`;
-		console.log(this.el.style.transform);
   }
   
   canBeThrown() {

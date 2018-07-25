@@ -1,4 +1,6 @@
 import '../styles/styles.css';
 import PlayableAdMediator from './Mediator';
 
-const playableAd = new PlayableAdMediator();
+window.addEventListener('load', () => {
+	window.setTimeout(() => new PlayableAdMediator(), 1000);
+});

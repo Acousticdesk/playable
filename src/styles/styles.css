@@ -142,11 +142,13 @@ html, body {
     height: 7.3125em;
     position: absolute;
     top: 3.125em;
-    animation: sliding 3s forwards infinite linear;
     transition: opacity .5s linear;
 }
 .basket.hit {
     opacity: 0;
+}
+.basket.animation {
+    animation: sliding 3s forwards infinite linear;
 }
 .card {
     width: 3.75em;

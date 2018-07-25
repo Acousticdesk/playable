@@ -80,6 +80,6 @@ export default class Screen  {
   }
   
   getWindowWidth() {
-  	return document.documentElement.clientWidth;
+  	return document.documentElement.clientWidth || 320;
 	}
 }

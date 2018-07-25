@@ -35,6 +35,10 @@ export default class Basket {
 		this.el.classList[action]('hit');
 	}
 	
+	animationStart() {
+		this.el.classList.add('animation');
+	}
+	
 	onWin() {
 		this.hitStyleClass('add');
 	}
@@ -45,7 +49,7 @@ export default class Basket {
 	
 	getKeyframes(screenSize) {
 		const metrics = this.getMetrics();
-		const translate = screenSize - metrics.width;
+		const translate = window.parseInt(screenSize - metrics.width);
 		
 		return '@-webkit-keyframes sliding {\n' +
 			'    0% {\n' +

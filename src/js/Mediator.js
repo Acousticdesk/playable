@@ -108,4 +108,8 @@ export default class PlayableAdMediator extends PubSub {
   getBasketKeyframes(screenSize) {
     return this.basket.getKeyframes(screenSize);
   }
+  
+  startBasketAnimation() {
+    this.basket.animationStart();
+  }
 }
