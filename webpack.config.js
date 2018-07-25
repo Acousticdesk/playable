@@ -32,6 +32,7 @@ module.exports = {
     new HtmlPlugin({
       template: 'index.ejs',
       filename: 'markup.html',
+      isProd: process.env.ENVIRONMENT,
       inject: false
     }),
     new HtmlPlugin({

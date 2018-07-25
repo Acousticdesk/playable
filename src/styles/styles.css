@@ -19,17 +19,6 @@ html, body {
     margin: 0;
     padding: 0;
 }
-@keyframes sliding {
-    0% {
-        transform: translateX(0);
-    }
-    50% {
-        transform: translateX(320px);
-    }
-    100% {
-        transform: translateX(0);
-    }
-}
 @keyframes rotation {
     from {
         transform: rotate(0deg);
@@ -40,15 +29,12 @@ html, body {
 }
 @keyframes waiting {
     0% {
-        bottom: 3.125em;
         transform: rotate(-45deg);
     }
     87% {
-        bottom: 6.25em;
         transform: rotate(45deg);
     }
     100% {
-        bottom: 3.125em;
         transform: rotate(-45deg);
     }
 }
@@ -154,14 +140,13 @@ html, body {
 .basket {
     width: 5.625em;
     height: 7.3125em;
-    background: url('var(--URL)/hat.png') no-repeat;
-    background-size: 100% 100%;
     position: absolute;
     top: 3.125em;
     animation: sliding 3s forwards infinite linear;
+    transition: opacity .5s linear;
 }
 .basket.hit {
-    animation: hit 1s, sliding 3s forwards infinite linear;
+    opacity: 0;
 }
 .card {
     width: 3.75em;
@@ -319,15 +304,13 @@ html, body {
 }
 
 .skip-game {
-    border-radius: 50%;
     position: absolute;
     right: 20px;
     bottom: 20px;
     font-size: 1.25em;
-    background: #fff;
-    color: #333;
+    color: #fff;
+    text-decoration: underline;
     padding: 1.25em;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
     transition: opacity .3s;
 }
 

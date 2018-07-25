@@ -42,4 +42,38 @@ export default class Basket {
 	onEventsOff() {
 		this.mediatorEvents(this.mediator, 'unsub');
 	}
+	
+	getKeyframes(screenSize) {
+		const metrics = this.getMetrics();
+		const translate = screenSize - metrics.width;
+		
+		return '@-webkit-keyframes sliding {\n' +
+			'    0% {\n' +
+			'        -webkit-transform: translateX(0);\n' +
+			'                transform: translateX(0);\n' +
+			'    }\n' +
+			'    50% {\n' +
+			'        -webkit-transform: translateX(' + `${translate}px` + ');\n' +
+			'                transform: translateX(' + `${translate}px` + ');\n' +
+			'    }\n' +
+			'    100% {\n' +
+			'        -webkit-transform: translateX(0);\n' +
+			'                transform: translateX(0);\n' +
+			'    }\n' +
+			'}\n' +
+			'@keyframes sliding {\n' +
+			'    0% {\n' +
+			'        -webkit-transform: translateX(0);\n' +
+			'                transform: translateX(0);\n' +
+			'    }\n' +
+			'    50% {\n' +
+			'        -webkit-transform: translateX(' + `${translate}px` + ');\n' +
+			'                transform: translateX(' + `${translate}px` + ');\n' +
+			'    }\n' +
+			'    100% {\n' +
+			'        -webkit-transform: translateX(0);\n' +
+			'                transform: translateX(0);\n' +
+			'    }\n' +
+			'}'
+	}
 }

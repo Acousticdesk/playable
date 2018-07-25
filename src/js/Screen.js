@@ -78,4 +78,8 @@ export default class Screen  {
   getFingerPosition() {
     return this.fingerPosition;
   }
+  
+  getWindowWidth() {
+  	return document.documentElement.clientWidth;
+	}
 }

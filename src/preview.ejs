@@ -9,7 +9,7 @@
  <link rel="stylesheet" href="../dist/styles.css">
 </head>
 <body>
- <%= require('../dist/markup.html') %>
+ <%= require('ejs-loader!./index.ejs')() %>
  <script src="../dist/script.js"></script>
 </body>
 </html>

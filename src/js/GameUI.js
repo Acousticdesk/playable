@@ -21,8 +21,18 @@ export default class GameUI {
     this.onEventsOff = this.onEventsOff.bind(this);
     this.onScreenTouchstart = this.onScreenTouchstart.bind(this);
   
+    this.setGenericStyles(mediator);
     this.delegateUIEvents();
     this.mediatorEvents(mediator, 'subscribe');
+  }
+  
+  setGenericStyles(mediator) {
+    const style = document.createElement('style');
+    const screenSize = mediator.getWindowWidth();
+    
+    style.textContent = mediator.getBasketKeyframes(screenSize);
+    
+    document.head.appendChild(style);
   }
   
   eraseUI () {
@@ -90,7 +100,6 @@ export default class GameUI {
   
   resetAssetsClasses () {
     window.setTimeout(() => {
-      this.mediator.removeBasketHitClass();
       this.hand.classList.add('waiting');
       this.resetHandAnglePosition();
     }, 1000);

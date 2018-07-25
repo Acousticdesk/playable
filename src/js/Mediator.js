@@ -10,23 +10,23 @@ import Basket from './Basket';
 export default class PlayableAdMediator extends PubSub {
   constructor() {
     super();
-  
+
+		this.basket = new Basket(this);
     this.screen = new Screen(this);
     this.apple = new Apple(this);
     this.gameCore = new GameCore(this);
     this.gameUI = new GameUI(this);
     this.preview = new Preview(this);
     this.finger = new Finger(this);
-    this.basket = new Basket(this);
   
     this.register(
+			this.basket,
       this.screen,
       this.apple,
       this.gameCore,
       this.gameUI,
       this.preview,
       this.finger,
-      this.basket
     );
   
     this.preview.start();
@@ -78,10 +78,6 @@ export default class PlayableAdMediator extends PubSub {
     return this.basket.isCollision();
   }
   
-  removeBasketHitClass() {
-		this.basket.hitStyleClass('remove');
-  }
-  
   isDevelopmentEnv() {
     return this.gameCore.isDevelopmentEnv();
   }
@@ -103,5 +99,13 @@ export default class PlayableAdMediator extends PubSub {
   previewThrow() {
     this.apple.previewThrow();
     return this;
+  }
+  
+  getWindowWidth() {
+    return this.screen.getWindowWidth();
+  }
+  
+  getBasketKeyframes(screenSize) {
+    return this.basket.getKeyframes(screenSize);
   }
 }
