@@ -209,7 +209,8 @@ export default class GameUI {
 		// "[[{"type":"banner","width":320,"height":480}]]"
 		// ],
 		// title: "[[{"type":"title"}]]",
-		// rating: "[[{"type":"rating"}]]"
+		// rating: "[[{"type":"rating"}]]",
+    // thumbnail: "[[{"type":"thumbnail"}]]"
 		const data = this.mediator.isDevelopmentEnv() ? {
 			images: [
 				'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg',
@@ -217,11 +218,13 @@ export default class GameUI {
 				'http://wallpaperstock.net/banner-peak_wallpapers_27665_320x480.jpg'
 			],
 			title: 'Hello world!',
-			rating: 3
+			rating: 3,
+      thumbnail: 'https://lh3.googleusercontent.com/mChcJRZJgjSNRRHLjvNjsT_UsvX9Qp5IgC4Zp1yp71Dpl2ewUw9lqxE-8xFHInn1ro4=s200-rw'
 		} : {
 			images: [],
 			title: '',
-			rating: ''
+			rating: '',
+      thumbnail: ''
 		};
 
 		DIOInt(data);
