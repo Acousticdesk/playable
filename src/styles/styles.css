@@ -323,3 +323,11 @@ html, body {
 .preload {
     display: none;
 }
+
+.thumbnail {
+    position: absolute;
+    width: 3.5em;
+    height: 3.5em;
+    top: 2.9em;
+    left: 1.1em;
+}
